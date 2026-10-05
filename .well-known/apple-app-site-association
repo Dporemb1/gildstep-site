@@ -1,0 +1,17 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": [
+          "TEAMID.com.gildstep.app"
+        ],
+        "components": [
+          {
+            "/": "/u/*",
+            "comment": "Friend invites open the profile in the app"
+          }
+        ]
+      }
+    ]
+  }
+}
