@@ -13,5 +13,10 @@
         ]
       }
     ]
+  },
+  "webcredentials": {
+    "apps": [
+      "TEAMID.com.gildstep.app"
+    ]
   }
 }
