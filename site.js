@@ -163,7 +163,7 @@
         home();
       } catch (err) {
         // Anything unexpected: show the page finished and still.
-        root.classList.remove("js", "pin", "climbing");
+        root.classList.remove("js", "pin", "pin-tight", "climbing");
         if (window.console) console.error(err);
       }
     }
@@ -179,26 +179,26 @@
       if (parent) parent.appendChild(node);
       return node;
     }
+    function cents(el) {
+      var m = el && el.textContent.match(/(\d+)(?:\.(\d{1,2}))?/);
+      return m ? Number(m[1]) * 100 + Number(((m[2] || "") + "00").slice(0, 2)) : 0;
+    }
 
-    // Founders pricing shows through its last day (the visitor's own date).
-    $$("[data-deal-ends]").forEach(function (el) {
-      var now = new Date();
-      var key = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0") + "-" + String(now.getDate()).padStart(2, "0");
-      if (key > el.getAttribute("data-deal-ends")) root.classList.add("deal-over");
+    // Founders pricing. The "Save" badges are worked out from the two
+    // prices shown beside them (rounded down, in cents, like the app's own
+    // saving), so changing a price in the page changes its badge. The offer
+    // closes when the app's does: 11:59 PM Arizona time (UTC-7 all year) on
+    // its last day. After that the standard prices show alone.
+    $$("[data-deal]").forEach(function (row) {
+      var now = cents($("[data-now]", row));
+      var was = cents($("[data-was]", row));
+      var badge = $("[data-save]", row);
+      var pct = was > 0 ? Math.floor(((was - now) * 100) / was + 1e-9) : 0;
+      if (badge && pct > 0) badge.textContent = "Save " + pct + "%";
     });
-
-    // The check-in calendar on the hero's Progress screen: 12 weeks, steadier
-    // as they go (three runs a week, the odd one that got away).
-    var WEEKS = ["0000000", "0100100", "0101000", "0101010", "0100010", "0101010", "0101011", "0101010", "0001010", "0101010", "0101011", "0101000"];
-    $$("[data-heat]").forEach(function (el) {
-      WEEKS.forEach(function (week, w) {
-        week.split("").forEach(function (on, day) {
-          var cell = document.createElement("i");
-          // The last week stops at today.
-          if (on === "1" && !(w === WEEKS.length - 1 && day > 3)) cell.className = "on";
-          el.appendChild(cell);
-        });
-      });
+    $$("[data-deal-ends]").forEach(function (el) {
+      var d = /^(\d{4})-(\d{2})-(\d{2})$/.exec(el.getAttribute("data-deal-ends") || "");
+      if (d && Date.now() >= Date.UTC(Number(d[1]), Number(d[2]) - 1, Number(d[3]) + 1, 7)) root.classList.add("deal-over");
     });
 
     // ================= How it works: the breakdown =================
@@ -206,17 +206,23 @@
     // big goal splits into months, a month into weeks, a week into one card,
     // and then that card is done. PHASES are where each moment starts, as a
     // share of the scroll. Without motion (or on a very short screen) nothing
-    // pins and the whole breakdown is laid out at once.
+    // pins and the whole tree is laid out at once.
     var how = $("#how");
     var pinEl = $(".how-pin", how);
+    var stage = $("#stage");
+    var tree = $("#tree");
+    var links = $(".links", tree);
     var ot = $("#ot");
+    var lineList = $(".b1 .lines", how);
+    var lineEls = $$("li", lineList);
     var PHASES = [0.16, 0.4, 0.64, 0.84];
     var pinOn = false;
     var phase = -1;
     var pinStart = 0;
     var pinRun = 0;
     var checkTimer = null;
-    var tightFor = -1;
+    var tightFor = "";
+    var pinWanted = false;
 
     // Where something sits on the page, from the layout itself (so a reveal
     // that's still sliding, or a pinned screen, doesn't move the answer).
@@ -227,6 +233,61 @@
         el = el.offsetParent;
       }
       return y;
+    }
+    function px(name) {
+      return parseFloat(getComputedStyle(stage).getPropertyValue(name)) || 0;
+    }
+
+    // The gold lines: from the bottom of each card to the top of each card
+    // it split into, with square corners eased round. The one that leads to
+    // today is the bright one. Drawn from where the cards are laid out, so
+    // they fit any width.
+    function drawLinks() {
+      var gap = px("--c");
+      var rows = [$(".lv-goal", tree), $(".lv-months", tree), $(".lv-weeks", tree), $(".lv-today", tree)];
+      function mid(row, el) {
+        return row.offsetLeft + el.offsetLeft + el.offsetWidth / 2;
+      }
+      function path(x0, y0, x1, y1) {
+        var half = (y0 + y1) / 2;
+        var r = Math.min(8, Math.abs(x1 - x0) / 2, (y1 - y0) / 2);
+        var dir = x1 > x0 ? 1 : -1;
+        if (Math.abs(x1 - x0) < 1) return "M" + x0.toFixed(1) + " " + y0.toFixed(1) + "V" + y1.toFixed(1);
+        return "M" + x0.toFixed(1) + " " + y0.toFixed(1) + "V" + (half - r).toFixed(1) + "Q" + x0.toFixed(1) + " " + half.toFixed(1) + " " + (x0 + dir * r).toFixed(1) + " " + half.toFixed(1) + "H" + (x1 - dir * r).toFixed(1) + "Q" + x1.toFixed(1) + " " + half.toFixed(1) + " " + x1.toFixed(1) + " " + (half + r).toFixed(1) + "V" + y1.toFixed(1);
+      }
+      links.textContent = "";
+      var from = [$(".gcard", tree), $(".mo.now", tree), $(".wk.now", tree)];
+      var to = [$$(".mo", tree), $$(".wk", tree), [ot]];
+      for (var n = 0; n < 3; n++) {
+        var g = svg("g", { class: "c" + (n + 1) }, links);
+        var y1 = rows[n + 1].offsetTop;
+        var y0 = y1 - gap;
+        var x0 = mid(rows[n], from[n]);
+        var hot = null;
+        for (var j = 0; j < to[n].length; j++) {
+          var el = to[n][j];
+          // Today's card is as wide as the tree: the line comes straight down.
+          var x1 = n === 2 ? x0 : mid(rows[n + 1], el);
+          var p = svg("path", { d: path(x0, y0, x1, y1), pathLength: 1 }, g);
+          if (n === 2 || el.classList.contains("now")) {
+            p.setAttribute("class", "hot");
+            hot = { p: p, x: x1 };
+          }
+        }
+        if (hot) {
+          g.appendChild(hot.p); // on top of the fainter ones
+          svg("circle", { cx: x0.toFixed(1), cy: y0.toFixed(1), r: 2.5 }, g);
+          svg("circle", { cx: hot.x.toFixed(1), cy: y1.toFixed(1), r: 2.5 }, g);
+        }
+      }
+    }
+
+    // The gold marker beside the lines sits on the one that's happening.
+    function moveMarker() {
+      var li = lineEls[Math.max(0, Math.min(3, phase))];
+      if (!li) return;
+      lineList.style.setProperty("--my", li.offsetTop + "px");
+      lineList.style.setProperty("--mh", li.offsetHeight + "px");
     }
 
     function setDone(done, celebrate) {
@@ -253,31 +314,59 @@
         how.classList.toggle("ph" + i, i === n);
         if (i) how.classList.toggle("ge" + i, n >= i);
       }
+      moveMarker();
       if (n >= 4 && was < 4) setDone(true, was >= 0);
       else if (n < 4 && was >= 4) setDone(false, false);
     }
+    // Pinning needs room for the words and the tree in one screen: a very
+    // short screen (a small phone with its toolbars up, a squat window)
+    // gets the whole tree laid out instead.
     function canPin() {
-      return !reduced && hasIO && window.innerHeight >= 540 && window.CSS && CSS.supports && CSS.supports("position", "sticky");
+      return !reduced && hasIO && window.innerHeight >= (window.innerWidth < 960 ? 600 : 560) && window.CSS && CSS.supports && CSS.supports("position", "sticky");
     }
     function measurePin() {
-      pinOn = canPin();
-      root.classList.toggle("pin", pinOn);
-      // A short phone keeps the heading out of the pinned screen. Decided
-      // per width, so a browser's toolbars sliding away don't flip it.
-      if (window.innerWidth !== tightFor) {
-        tightFor = window.innerWidth;
-        root.classList.toggle("pin-tight", window.innerWidth < 960 && window.innerHeight < 640);
+      // On a phone (or a short tablet) the heading and the note ride in
+      // above the pinned screen. Both choices are made once per width
+      // there, so a phone's toolbars sliding away never flip the layout
+      // mid-scroll.
+      var narrow = window.innerWidth < 960;
+      var key = String(window.innerWidth);
+      if (key !== tightFor) {
+        tightFor = key;
+        pinWanted = canPin();
+        root.classList.toggle("pin-tight", window.innerWidth < 720 || (narrow && window.innerHeight < 720));
+      } else if (!narrow) {
+        pinWanted = canPin();
       }
+      pinOn = pinWanted;
+      root.classList.toggle("pin", pinOn);
+      stage.style.removeProperty("--oth");
+      stage.style.removeProperty("--k");
       if (!pinOn) {
         // Laid out whole, with the card done.
         phase = -1;
         for (var i = 0; i <= 4; i++) how.classList.remove("ph" + i, "ge" + i);
+        how.style.removeProperty("--hh");
         setDone(true, false);
+        drawLinks();
         return;
       }
+      var head = $(".how-head", how);
+      how.style.setProperty("--hh", (root.classList.contains("pin-tight") ? head.offsetHeight + 8 : 0) + "px");
+      // The One Thing card's real height, then the tree's, then how much of
+      // the screen there is for it.
+      stage.style.setProperty("--oth", ot.offsetHeight + "px");
+      var full = tree.offsetHeight;
+      var stacked = window.innerWidth < 960;
+      var room = stacked ? pinEl.clientHeight - pageTop(stage, pinEl) - 14 : pinEl.clientHeight - 2 * 92;
+      stage.style.setProperty("--k", Math.max(0.62, Math.min(1, room / full)).toFixed(4));
+      // Scaled down, the tree is laid out wider, so the card may be shorter.
+      stage.style.setProperty("--oth", ot.offsetHeight + "px");
       var pad = parseFloat(getComputedStyle(how).paddingTop) || 0;
       pinStart = pageTop(how) + pad;
       pinRun = Math.max(1, how.offsetHeight - pad - pinEl.offsetHeight);
+      drawLinks();
+      moveMarker();
     }
     function phaseAt(y) {
       var p = (y - pinStart) / pinRun;
@@ -298,7 +387,8 @@
     var keyHeld = false;
 
     // The rays and the laurel, with the app's own geometry
-    // (components/celebration/Rays, lib/celebrationGeometry), at this size.
+    // (components/celebration/Rays, lib/celebrationGeometry). The page
+    // scales them with the medal.
     function build() {
       if (built) return;
       built = true;
@@ -336,29 +426,43 @@
       branch(240, 150);
     }
 
-    // A short burst: small turned rectangles falling down the sides of the
-    // stage, never over the words, gone in a second and a half.
+    // The burst: pieces fly out from behind the medal in every direction
+    // (further upward than down), slow, then fall and fade. Gone in about
+    // two seconds. The same burst every time (no random numbers).
     function confetti() {
       var box = $(".fin-confetti", finish);
       box.textContent = "";
       if (reduced) return;
-      var W = box.clientWidth;
-      var H = box.clientHeight;
-      var colors = ["#F2C65A", "#E0863A", "#F4EFE6", "#C8973A"];
-      for (var i = 0; i < 32; i++) {
-        var r = ((i * 9301 + 49297) % 233280) / 233280;
-        var band = 0.22;
-        var lane = i % 2 === 0 ? r * band + 0.02 : 1 - (r * band + 0.02);
-        var share = 0.5 + ((i * 13) % 35) / 100;
+      var medal = $(".medal-stage", finish);
+      var cx = medal.offsetLeft + medal.offsetWidth / 2;
+      var cy = medal.offsetTop + medal.offsetHeight / 2;
+      var reach = Math.min(box.clientWidth * 0.62, 400);
+      var colors = ["#F2C65A", "#F7DC8A", "#E0863A", "#F4EFE6", "#C8973A", "#F2C65A"];
+      var seed = 7;
+      function rnd() {
+        seed = (seed * 9301 + 49297) % 233280;
+        return seed / 233280;
+      }
+      var COUNT = 96;
+      for (var i = 0; i < COUNT; i++) {
+        var a = (i / COUNT) * Math.PI * 2 + rnd() * 0.3;
+        var up = Math.sin(a) < 0 ? 1 : 0.62;
+        var far = reach * (0.34 + rnd() * 0.66) * up;
+        var x1 = cx + Math.cos(a) * far * 1.12;
+        var y1 = cy + Math.sin(a) * far * 0.9 - 30;
         var piece = document.createElement("i");
-        if (i % 3 === 0) piece.className = "tall";
-        piece.style.backgroundColor = colors[(i + (i >> 1)) % colors.length];
-        piece.style.setProperty("--x", (lane * W).toFixed(0) + "px");
-        piece.style.setProperty("--dx", (lane < 0.5 ? -1 : 1) * (6 + ((i * 37) % 20)) + "px");
-        piece.style.setProperty("--fall", (H * share).toFixed(0) + "px");
-        piece.style.setProperty("--spin", (i % 2 === 0 ? 1 : -1) * (160 + ((i * 53) % 300)) + "deg");
-        piece.style.setProperty("--dl", (i % 8) * 35 + "ms");
-        piece.style.setProperty("--dur", "1500ms");
+        piece.className = i % 5 === 0 ? "dot" : i % 3 === 0 ? "tall" : "";
+        piece.style.backgroundColor = colors[i % colors.length];
+        piece.style.setProperty("--x0", cx.toFixed(0) + "px");
+        piece.style.setProperty("--y0", cy.toFixed(0) + "px");
+        piece.style.setProperty("--x1", x1.toFixed(0) + "px");
+        piece.style.setProperty("--y1", y1.toFixed(0) + "px");
+        piece.style.setProperty("--x2", (x1 + (rnd() - 0.5) * 70).toFixed(0) + "px");
+        piece.style.setProperty("--y2", (y1 + 170 + rnd() * 260).toFixed(0) + "px");
+        piece.style.setProperty("--r1", ((rnd() - 0.5) * 540).toFixed(0) + "deg");
+        piece.style.setProperty("--r2", ((rnd() - 0.5) * 1300).toFixed(0) + "deg");
+        piece.style.setProperty("--dl", Math.round(rnd() * 140) + "ms");
+        piece.style.setProperty("--dur", Math.round(1500 + rnd() * 700) + "ms");
         box.appendChild(piece);
       }
     }
@@ -386,7 +490,11 @@
     }
     hold.addEventListener("pointerdown", function (e) {
       touchedFinish = true;
-      if (hold.setPointerCapture) hold.setPointerCapture(e.pointerId);
+      // Keep the press if the finger drifts off the ring. Never let a
+      // browser that refuses the capture stop the hold itself.
+      try {
+        hold.setPointerCapture(e.pointerId);
+      } catch (err) {}
       startHold();
     });
     ["pointerup", "pointercancel", "lostpointercapture"].forEach(function (type) {
@@ -436,23 +544,14 @@
     // ================= The staircase =================
     // Four steps, like the mark: the ground you start on, then Plan, One
     // Thing and Finish. Each turns gold when you reach it and stays gold;
-    // the last one turns when the goal is finished. The mark in the corner
-    // and beside each beat always shows it. With room in the left margin
-    // (about 1250 px and wider) the steps are also one thin line down the
-    // page that comes down beside each beat and steps in toward it.
+    // the last one turns when the goal is finished. It lives in the mark in
+    // the corner and the one beside each step's label.
     var climb = $("#climb");
     var stepEls = [1, 2, 3].map(function (k) {
       return $('.step[data-step="' + k + '"]', climb);
     });
     var navMark = $(".nav .mark");
     var reached = [false, false];
-    var rail = svg("svg", { class: "rail", "aria-hidden": "true", focusable: "false" });
-    var railBase = svg("path", { class: "base" }, rail);
-    var railGold = svg("path", { class: "gold" }, rail);
-    climb.insertBefore(rail, climb.firstChild);
-    var geo = null; // the line's corners, when there's room for it
-    var goldMax = 0;
-    var climbTop = 0;
 
     function light(mark, n) {
       for (var i = 1; i <= 4; i++) $(".s" + i, mark).classList.toggle("lit", i <= n);
@@ -464,53 +563,6 @@
       light($(".mark", stepEls[0]), reached[0] ? 2 : 1);
       light($(".mark", stepEls[1]), reached[1] ? 3 : 2);
       light($(".mark", stepEls[2]), done ? 4 : 3);
-      if (!geo) return;
-      // Gold as far as you've been; the last tread only once it's finished.
-      var len = Math.min(goldMax, geo.beforeLast) + (done && goldMax >= geo.beforeLast ? geo.jog : 0);
-      railGold.setAttribute("stroke-dasharray", len.toFixed(1) + " " + (geo.total + 10).toFixed(1));
-    }
-    function layoutRail() {
-      var cr = climb.getBoundingClientRect();
-      climbTop = pageTop(climb);
-      function mid(el) {
-        return pageTop(el) + el.offsetHeight / 2 - climbTop;
-      }
-      var edge = stepEls[2].getBoundingClientRect().left - cr.left; // where the content starts
-      var jog = Math.min(30, (edge - 36) / 3);
-      if (jog < 16) {
-        geo = null;
-        rail.classList.remove("on");
-        return;
-      }
-      var x3 = edge - 20;
-      var x = [x3 - 3 * jog, x3 - 2 * jog, x3 - jog, x3];
-      var t1, t2, anchor;
-      if (pinOn) {
-        // The beats sit in the pinned screen. The first tread is where the
-        // label is as the screen pins; the second arrives at the label at
-        // the moment the breakdown gives way to today's One Thing.
-        anchor = pageTop(stepEls[0], pinEl) + stepEls[0].offsetHeight / 2;
-        t1 = pinStart + anchor - climbTop;
-        t2 = t1 + PHASES[3] * pinRun;
-      } else {
-        anchor = window.innerHeight * 0.5;
-        t1 = mid(stepEls[0]);
-        t2 = mid(stepEls[1]);
-      }
-      var t3 = mid(stepEls[2]);
-      var dPath = "M" + x[0] + " 0V" + t1.toFixed(1) + "H" + x[1] + "V" + t2.toFixed(1) + "H" + x[2] + "V" + t3.toFixed(1) + "H" + x[3];
-      railBase.setAttribute("d", dPath);
-      railGold.setAttribute("d", dPath);
-      geo = { t: [t1, t2, t3], jog: jog, anchor: anchor, beforeLast: t3 + 2 * jog, total: t3 + 3 * jog };
-      rail.classList.add("on");
-    }
-    // How far down the line the gold has come, for a scroll position.
-    function goldAt(y) {
-      var v = y + geo.anchor - climbTop;
-      var t = geo.t;
-      if (v < t[0]) return Math.max(0, v);
-      if (v < t[1]) return v + geo.jog;
-      return Math.min(v, t[2]) + 2 * geo.jog;
     }
 
     // ================= Scroll =================
@@ -527,14 +579,9 @@
           node.style.setProperty("--py", (y * parseFloat(node.getAttribute("data-depth"))).toFixed(1) + "px");
         });
       }
-      if (pinOn) setPhase(phaseAt(y));
       // Which steps have been reached.
-      if (geo) {
-        var v = y + geo.anchor - climbTop;
-        if (v >= geo.t[0]) reached[0] = true;
-        if (v >= geo.t[1]) reached[1] = true;
-        goldMax = Math.max(goldMax, goldAt(y));
-      } else if (pinOn) {
+      if (pinOn) {
+        setPhase(phaseAt(y));
         if (y >= pinStart - vh * 0.35) reached[0] = true;
         if (phase >= 4) reached[1] = true;
       } else {
@@ -545,7 +592,6 @@
     }
     function relayout() {
       measurePin();
-      layoutRail();
       onScroll();
     }
 
@@ -575,8 +621,10 @@
       $(".cheers").setAttribute("data-n", "3");
       reached = [true, true];
       relayout();
-      goldMax = geo ? geo.total : 0;
       finished();
+      window.addEventListener("resize", relayout);
+      window.addEventListener("load", relayout);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(relayout);
     } else {
       root.classList.add("climbing");
       relayout();
@@ -588,7 +636,7 @@
             seen.unobserve(entry.target);
           });
         },
-        { threshold: 0.25, rootMargin: "0px 0px -6% 0px" },
+        { threshold: 0.2, rootMargin: "0px 0px -6% 0px" },
       );
       reveals.forEach(function (node) {
         seen.observe(node);
@@ -628,12 +676,10 @@
       });
       window.addEventListener("load", relayout);
       if (document.fonts && document.fonts.ready) document.fonts.ready.then(relayout);
-      // The finish copy slides up as it appears; measure once it has settled.
-      setTimeout(relayout, 1200);
     }
 
     // The capsule marks the section you're in.
-    var links = $$(".nav-links a");
+    var navLinks = $$(".nav-links a");
     if (hasIO) {
       var current = {};
       var spy = new IntersectionObserver(
@@ -645,7 +691,7 @@
           $$("[data-spy]").forEach(function (sec) {
             if (current[sec.id]) id = sec.id;
           });
-          links.forEach(function (a) {
+          navLinks.forEach(function (a) {
             a.classList.toggle("on", a.getAttribute("href") === "#" + id);
           });
         },
@@ -653,6 +699,50 @@
       );
       $$("[data-spy]").forEach(function (sec) {
         spy.observe(sec);
+      });
+    }
+
+    // Questions: native <details>, so they open from the keyboard and read
+    // right to a screen reader without any of this. With motion allowed,
+    // the answer's height eases open and shut instead of jumping.
+    if (!reduced && Element.prototype.animate) {
+      $$(".qa details").forEach(function (item) {
+        var summary = $("summary", item);
+        var answer = $(".a", item);
+        var running = null;
+        function run(from, to, done) {
+          if (running) running.cancel();
+          answer.classList.add("moving");
+          var anim = answer.animate(
+            [
+              { height: from + "px", opacity: from ? 1 : 0 },
+              { height: to + "px", opacity: to ? 1 : 0 },
+            ],
+            { duration: 360, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
+          );
+          running = anim;
+          anim.onfinish = function () {
+            if (running !== anim) return;
+            running = null;
+            answer.classList.remove("moving");
+            if (done) done();
+          };
+        }
+        summary.addEventListener("click", function (e) {
+          e.preventDefault();
+          if (item.open && !item.classList.contains("closing")) {
+            item.classList.add("closing");
+            run(answer.offsetHeight, 0, function () {
+              item.open = false;
+              item.classList.remove("closing");
+            });
+          } else {
+            var from = item.open ? answer.offsetHeight : 0;
+            item.classList.remove("closing");
+            item.open = true;
+            run(from, answer.scrollHeight, null);
+          }
+        });
       });
     }
 
