@@ -13,7 +13,10 @@
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <link rel="preload" href="/fonts/bricolage-800.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/styles.css">
+<script src="/config.js" defer></script>
+<script src="/site.js" defer></script>
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Gildstep">
 <meta property="og:title" content="Gildstep Privacy Policy">
@@ -22,14 +25,13 @@
 <meta property="og:image" content="https://gildstep.com/assets/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Gildstep: Finish lines, not wish lists. Set a big goal. Know exactly what to do today.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Gildstep Privacy Policy">
 <meta name="twitter:description" content="Gildstep Privacy Policy.">
 <meta name="twitter:image" content="https://gildstep.com/assets/og.png">
 </head>
-<body data-page="privacy" data-app="Gildstep" data-support="support@gildstep.com" data-scheme="gildstep" data-supabase-url="https://ggbiohijkmzzqigvxdph.supabase.co" data-supabase-key="sb_publishable_Blx6dCkwe_uo34wRgkRmCA_ODXNYuqp">
-<header class="wrap top"><a class="brand" href="/" aria-label="Gildstep home"><svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="mk" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#B8862B"/><stop offset="1" stop-color="#F7DC8A"/></linearGradient></defs><rect width="64" height="64" rx="15" fill="#1D1A15"/><path d="M13 47 H22 V39 H31 V31 H40 V23 H51" fill="none" stroke="url(#mk)" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Gildstep</span></a></header>
+<body data-page="policy" data-app="Gildstep" data-support="support@gildstep.com" data-scheme="gildstep" data-supabase-url="https://ggbiohijkmzzqigvxdph.supabase.co" data-supabase-key="sb_publishable_Blx6dCkwe_uo34wRgkRmCA_ODXNYuqp">
+<header class="wrap top"><a class="brand" href="/" aria-label="Gildstep home"><svg class="mark full" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="15"/><path class="s1" d="M13 47H22"/><path class="s2" d="M22 47V39H31"/><path class="s3" d="M31 39V31H40"/><path class="s4" d="M40 31V23H51"/></svg><span>Gildstep</span></a></header>
 <main class="wrap page">
 <h1>Gildstep Privacy Policy</h1>
 <p><strong>Last updated:</strong> November 2, 2026</p>
@@ -353,10 +355,15 @@
 Email: <strong><a href="mailto:support@gildstep.com">support@gildstep.com</a></strong></p>
 
 </main>
-<footer><div class="wrap">
-<span>© 2026 Gildstep</span>
-<nav aria-label="Footer"><a href="/privacy/">Privacy policy</a><a href="/terms/">Terms</a><a href="mailto:support@gildstep.com">support@gildstep.com</a></nav>
+<footer class="foot"><div class="wrap">
+<a class="brand" href="/" aria-label="Gildstep home"><svg class="mark full" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="15"/><path class="s1" d="M13 47H22"/><path class="s2" d="M22 47V39H31"/><path class="s3" d="M31 39V31H40"/><path class="s4" d="M40 31V23H51"/></svg><span>Gildstep</span></a>
+<p class="signoff">Make today gold.</p>
+<nav aria-label="Footer">
+<a href="/privacy/">Privacy policy</a><a href="/terms/">Terms</a><a href="mailto:support@gildstep.com">support@gildstep.com</a>
+<!-- EDIT: Instagram and TikTok show up here once their URLs are set in /config.js -->
+<a data-social="INSTAGRAM_URL" rel="noopener" hidden>Instagram</a><a data-social="TIKTOK_URL" rel="noopener" hidden>TikTok</a>
+</nav>
+<span class="copyright">© 2026 Gildstep</span>
 </div></footer>
-<script src="/site.js" defer></script>
 </body>
 </html>
