@@ -926,12 +926,31 @@ html:not(.js) .fin-done { display: none; }
 .cv.nl { font-weight: 500; color: var(--ink3); }
 .cn { margin-top: 4px; font-size: 14px; line-height: 1.45; color: var(--text); }
 .cn:empty { display: none; }
-.cmp-foot { display: grid; gap: 12px; max-width: 880px; margin: 22px auto 0; }
+/* under the table: one line of fine print, then the sources in a dropdown
+   (the questions' .qa dropdown at fine-print size, so site.js eases it
+   open the same way). Source links stay quiet: muted, underlined on hover. */
+.cmp-foot { display: grid; gap: 14px; max-width: 560px; margin: 22px auto 0; }
 .cmp-foot .fine { max-width: none; }
-.cmp-foot b { font-weight: 600; color: var(--text); }
-.cmp-src { display: grid; gap: 6px; }
-.cmp-src b { margin-right: 4px; }
-.cmp-src a { margin-right: 8px; white-space: nowrap; }
+.cmp-tell { white-space: nowrap; }
+.cmp-more { --px: 20px; border-radius: 18px; }
+.qa.cmp-more summary { min-height: 52px; padding: 10px var(--px); }
+.cmp-more summary:focus-visible { border-radius: 14px; }
+.cmp-more-t { font-weight: 600; font-size: 15px; line-height: 1.3; color: var(--text); }
+.cmp-more summary svg { width: 16px; height: 16px; }
+.cmp-more .a { font-size: 14.5px; line-height: 1.5; color: var(--ink3); }
+.qa .a .cmp-nl { max-width: none; padding: 0 var(--px) 12px; font-size: inherit; line-height: inherit; color: inherit; }
+.cmp-src { display: grid; gap: 8px; margin: 0 var(--px); padding: 12px 0 16px; border-top: 1px solid var(--line-s); }
+@media (max-width: 479px) { .cmp-more { --px: 18px; } }
+/* as wide as the table above it, so the edges line up */
+@media (min-width: 900px) { .cmp-foot { max-width: none; } }
+.cmp-src dt { font-weight: 600; color: var(--ink2); }
+.cmp-src dd { display: flex; flex-wrap: wrap; gap: 0 18px; margin: 0; }
+.cmp-src a { padding: 5px 0; color: inherit; text-decoration: none; white-space: nowrap; transition: color 0.18s ease; }
+.cmp-src a:hover { color: var(--text); text-decoration: underline; text-underline-offset: 3px; }
+@media (min-width: 640px) {
+  .cmp-src { gap: 0; }
+  .cmp-src div { display: grid; grid-template-columns: 88px minmax(0, 1fr); align-items: baseline; }
+}
 @media (max-width: 899px) {
   .cmp-t, .cmp-t tbody { display: block; }
   .cmp-t thead { display: none; }
