@@ -1001,7 +1001,6 @@ html:not(.js) .fin-done { display: none; }
 .pricing .fine { margin-top: 10px; }
 .deal-off, .deal-over .deal-on { display: none; }
 .deal-over div.deal-off { display: grid; }
-.deal-over span.deal-off { display: inline; }
 
 /* questions: rows of the same height that open in place (native
    <details>, so they work from the keyboard and with a screen reader, and
