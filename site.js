@@ -86,6 +86,65 @@
       });
     });
 
+    // Email links, on every page. The link is a plain mailto: and the click
+    // goes through, so a mail app opens if there is one. The address is
+    // also copied and "Email copied" shown, so the click does something
+    // you can see on a computer with no mail app set up. The message sits
+    // in a live region, so a screen reader says it too.
+    var copied = document.createElement("p");
+    copied.className = "copied";
+    copied.setAttribute("role", "status");
+    copied.setAttribute("aria-live", "polite");
+    document.body.appendChild(copied);
+    var copiedTimer = null;
+    function sayCopied() {
+      clearTimeout(copiedTimer);
+      // Emptied first, so the same words are announced again on a second click.
+      copied.textContent = "";
+      setTimeout(function () {
+        copied.textContent = "Email copied";
+        copied.classList.add("on");
+      }, 30);
+      copiedTimer = setTimeout(function () {
+        copied.classList.remove("on");
+      }, 2800);
+    }
+    // For browsers without the Clipboard API (or when it refuses): a
+    // hidden field, selected and copied the old way.
+    function copyOldWay(text) {
+      var field = document.createElement("textarea");
+      field.value = text;
+      field.setAttribute("readonly", "");
+      field.className = "sr";
+      var focused = document.activeElement;
+      document.body.appendChild(field);
+      field.select();
+      var ok = false;
+      try {
+        ok = document.execCommand("copy");
+      } catch (e) {}
+      document.body.removeChild(field);
+      // Selecting the field took the focus: back to the link.
+      if (focused && focused.focus) focused.focus();
+      return ok;
+    }
+    document.addEventListener("click", function (e) {
+      var a = e.target && e.target.closest ? e.target.closest('a[href^="mailto:"]') : null;
+      if (!a) return;
+      var address = a.getAttribute("href").slice(7).split("?")[0];
+      try {
+        address = decodeURIComponent(address);
+      } catch (err) {}
+      if (!address) return;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(address).then(sayCopied, function () {
+          if (copyOldWay(address)) sayCopied();
+        });
+      } else if (copyOldWay(address)) {
+        sayCopied();
+      }
+    });
+
     // The invite page: /u/<username> (GitHub Pages serves it from 404.html).
     var m = location.pathname.match(/^\/u\/([A-Za-z0-9_]{3,20})\/?$/);
     var invite = document.getElementById("invite");
@@ -575,8 +634,9 @@
       queued = false;
       var y = window.scrollY || 0;
       var vh = window.innerHeight;
-      // The hero's phones drift apart a little (depth).
-      if (!reduced && y < hero.offsetHeight) {
+      // The hero's three phones drift apart a little (depth). Under 768px
+      // only the middle one is shown, whole and still: nothing to move.
+      if (!reduced && window.innerWidth >= 768 && y < hero.offsetHeight) {
         depth.forEach(function (node) {
           node.style.setProperty("--py", (y * parseFloat(node.getAttribute("data-depth"))).toFixed(1) + "px");
         });
