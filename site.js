@@ -305,6 +305,8 @@
       } else {
         ot.classList.toggle("done", done);
       }
+      // This week's count takes today's run with it.
+      tree.classList.toggle("checked", done);
     }
     function setPhase(n) {
       if (n === phase) return;
