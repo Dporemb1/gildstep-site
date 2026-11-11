@@ -118,14 +118,15 @@
 <p class="m-sub">5 of 9 steps done this month</p>
 </div>
 <div class="m-kcard m-grow"><span class="m-tile"><svg><use href="#i-list"/></svg></span><div><b>See full plan</b><small>Every month, this week and next week</small></div><svg class="m-chev"><use href="#i-chev"/></svg></div>
-<div class="m-fo"><p class="m-caps">This month's focus</p><p class="m-t20">Run 9 miles at an easy pace</p></div>
+<div class="m-fo"><p class="m-caps">This month's focus</p><p class="m-t20">Run 11 miles at an easy pace</p></div>
 <div class="m-wk">
 <div class="m-between"><p class="m-t24">This week</p><p class="m-meta">Oct 5 to 11 · 6 days left</p></div>
-<div class="m-target"><p class="m-caps">Week target</p><p>Three runs, the long one at 7 miles</p></div>
+<div class="m-target"><p class="m-caps">Week target</p><p>Three runs, the long one at 10 miles</p></div>
 <div class="m-kcard m-steps">
-<div class="m-steps-h"><div class="m-between"><p class="m-caps lg">This week's steps</p><p class="m-meta">1 of 3 done</p></div><i class="m-bar"><i></i></i></div>
+<div class="m-steps-h"><div class="m-between"><p class="m-caps lg">This week's steps</p><p class="m-meta">0 of 3 done</p></div><i class="m-bar"><i></i></i></div>
 <div class="m-step"><i class="m-box"></i><span>Run 4 miles at an easy pace</span><svg class="m-grip"><use href="#i-grip"/></svg></div>
-<div class="m-step"><i class="m-box"></i><span>Long run: 7 miles</span><svg class="m-grip"><use href="#i-grip"/></svg></div>
+<div class="m-step"><i class="m-box"></i><span>Run 5 miles at a steady pace</span><svg class="m-grip"><use href="#i-grip"/></svg></div>
+<div class="m-step"><i class="m-box"></i><span>Long run: 10 miles</span><svg class="m-grip"><use href="#i-grip"/></svg></div>
 </div>
 </div>
 </div>
@@ -234,7 +235,7 @@
 <!-- The breakdown: one goal splits into its months, this month into its
      weeks, this week into today's One Thing. site.js draws the gold lines
      between them (.links) from where the cards really are. -->
-<div class="stage" id="stage" data-live role="img" aria-label="One big goal, run a half marathon, splits into three months. Month 2 splits into four weeks. Week 6 comes down to one card: today's One Thing, run 4 miles at an easy pace. A gold line runs from the goal down to today. Then it's checked off.">
+<div class="stage" id="stage" data-live role="img" aria-label="One big goal, run a half marathon, splits into three months. Month 2 splits into four weeks, each with its target: September 21 to 27, long run 8 miles, 3 of 3 runs done; September 28 to October 4, long run 9 miles, 2 of 3 runs done; this week, October 5 to 11, long run 10 miles; and October 12 to 18, long run 11 miles. This week comes down to one card: today's One Thing, run 4 miles at an easy pace. A gold line runs from the goal down to today. Then it's checked off.">
 <div class="fit">
 <i class="stage-glow"></i>
 <div class="tree" id="tree">
@@ -251,15 +252,19 @@
 </div>
 </div>
 <div class="lv lv-months">
-<div class="tile mo"><small>Month 1</small><b>Run 5 miles without stopping</b><i class="t-split"><i></i><i></i><i></i><i></i></i></div>
-<div class="tile mo now"><small>Month 2 <em>Now</em></small><b>Run 9 miles at an easy pace</b><i class="t-split"><i></i><i></i><i></i><i></i></i></div>
-<div class="tile mo"><small>Month 3</small><b>13.1 miles on race day</b><i class="t-split"><i></i><i></i><i></i><i></i></i></div>
+<div class="tile mo"><small>Month 1</small><b>Run 7 miles without stopping</b><i class="t-split"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></i></div>
+<div class="tile mo now"><small>Month 2 <em>Now</em></small><b>Run 11 miles at an easy pace</b><i class="t-split"><i class="on"></i><i class="on"></i><i class="cur"></i><i></i></i></div>
+<div class="tile mo"><small>Month 3</small><b>13.1 miles on race day</b><i class="t-split"><i></i><i></i><i></i><i></i><i></i></i></div>
 </div>
+<!-- Month 2's weeks as the app dates them (Monday to Sunday, "Sep 21 to
+     27"). Weeks that have happened show what was done; this week counts
+     today's run once the card below is checked; next week has only its
+     target. -->
 <div class="lv lv-weeks">
-<div class="tile wk"><small>Week 5</small><b>Long run: 6 miles</b><i class="t-days"><i></i><i class="on"></i><i></i><i class="on"></i><i></i><i class="on"></i><i></i></i></div>
-<div class="tile wk now"><small>Week 6 <em>Now</em></small><b>Long run: 7 miles</b><i class="t-days"><i></i><i class="on"></i><i></i><i class="on"></i><i></i><i class="on"></i><i></i></i></div>
-<div class="tile wk"><small>Week 7</small><b>Long run: 8 miles</b><i class="t-days"><i></i><i class="on"></i><i></i><i class="on"></i><i></i><i class="on"></i><i></i></i></div>
-<div class="tile wk"><small>Week 8</small><b>Long run: 9 miles</b><i class="t-days"><i></i><i class="on"></i><i></i><i class="on"></i><i></i><i class="on"></i><i></i></i></div>
+<div class="tile wk"><small><span>Sep 21</span> <span>to 27</span></small><b>Long run: 8 miles</b><p class="t-prog p3"><i><i></i></i><span>3 of 3 runs</span></p></div>
+<div class="tile wk"><small><span>Sep 28</span> <span>to Oct 4</span></small><b>Long run: 9 miles</b><p class="t-prog p2"><i><i></i></i><span>2 of 3 runs</span></p></div>
+<div class="tile wk now"><small><em>This week</em><span class="wk-d">Oct 5 to 11</span></small><b>Long run: 10 miles</b><p class="t-prog p0"><i><i></i></i><span class="w-open">0 of 3 runs</span><span class="w-done">1 of 3 runs</span></p></div>
+<div class="tile wk"><small><span>Oct 12</span> <span>to 18</span></small><b>Long run: 11 miles</b></div>
 </div>
 <div class="lv lv-today">
 <div class="ot" id="ot">
@@ -403,6 +408,53 @@
 <!-- story-screens:start --><!-- story-screens:end -->
 </div>
 </section>
+
+<!-- compare:start -->
+<!-- ───────────── How Gildstep compares ─────────────
+     EDIT: every cell about another app comes from that app's own App Store
+     listing or website, read in November 2026 (the links are under the
+     table). "Not listed" means neither mentions it. Re-check and change the
+     date when you update this. On a phone the table shows Gildstep beside
+     one app at a time; the four radio buttons choose which (no script).
+     Features only: prices are left to the pricing section below. -->
+<section class="compare" id="compare">
+<div class="wrap" data-reveal>
+<h2>How Gildstep compares</h2>
+<p class="cmp-why"><b>Why not just a habit tracker?</b> Habit apps track what you repeat. Gildstep gets one big goal to a finish line. If repeating habits are all you want to track, a habit app is the simpler choice.</p>
+<div class="cmp">
+<input class="cmp-r" type="radio" name="cmp" id="cmp-griply" aria-label="Compare Gildstep with Griply" checked>
+<input class="cmp-r" type="radio" name="cmp" id="cmp-streaks" aria-label="Compare Gildstep with Streaks">
+<input class="cmp-r" type="radio" name="cmp" id="cmp-habitica" aria-label="Compare Gildstep with Habitica">
+<input class="cmp-r" type="radio" name="cmp" id="cmp-meplus" aria-label="Compare Gildstep with Me+">
+<div class="cmp-pick" aria-hidden="true"><span>Gildstep and</span><label for="cmp-griply">Griply</label><label for="cmp-streaks">Streaks</label><label for="cmp-habitica">Habitica</label><label for="cmp-meplus">Me+</label></div>
+<div class="cmp-card">
+<table class="cmp-t" role="table">
+<caption class="sr">Gildstep compared with Griply, Streaks, Habitica and Me+</caption>
+<thead role="rowgroup"><tr role="row"><th role="columnheader" scope="col"><span class="sr">What matters</span></th><th role="columnheader" scope="col" class="c-g">Gildstep</th><th role="columnheader" scope="col" class="c-griply">Griply</th><th role="columnheader" scope="col" class="c-streaks">Streaks</th><th role="columnheader" scope="col" class="c-habitica">Habitica</th><th role="columnheader" scope="col" class="c-meplus">Me+</th></tr></thead>
+<tbody role="rowgroup">
+<tr role="row"><th role="rowheader" scope="row">Built around</th><td role="cell" class="c-g" data-app="Gildstep"><p class="cv">One big goal with a finish line</p></td><td role="cell" class="c-griply" data-app="Griply"><p class="cv">Goals, habits and tasks</p><p class="cn">Goals can have a target and a deadline.</p></td><td role="cell" class="c-streaks" data-app="Streaks"><p class="cv">Daily habits</p><p class="cn">Up to 24 tasks a day.</p></td><td role="cell" class="c-habitica" data-app="Habitica"><p class="cv">Habits, Dailies and To Do's</p><p class="cn">Played as a game.</p></td><td role="cell" class="c-meplus" data-app="Me+"><p class="cv">Daily routines</p><p class="cn">A routine planner and habit tracker.</p></td></tr>
+<tr role="row"><th role="rowheader" scope="row">Plans the months and weeks for you</th><td role="cell" class="c-g" data-app="Gildstep"><p class="cv y"><svg aria-hidden="true"><use href="#i-check"/></svg>Yes</p><p class="cn">AI plans each month and your first two weeks. First plan free, every goal with Premium.</p></td><td role="cell" class="c-griply" data-app="Griply"><p class="cv p"><i aria-hidden="true"></i>Partly</p><p class="cn">Templates come with a plan. Premium can connect your own AI app (beta).</p></td><td role="cell" class="c-streaks" data-app="Streaks"><p class="cv">You set the tasks</p><p class="cn">Can suggest smaller ones on Apple Intelligence devices.</p></td><td role="cell" class="c-habitica" data-app="Habitica"><p class="cv">You add the tasks</p><p class="cn">Community Challenges add ready-made lists.</p></td><td role="cell" class="c-meplus" data-app="Me+"><p class="cv p"><i aria-hidden="true"></i>Partly</p><p class="cn">Ready-made routine plans, and a test to find routines that suit you.</p></td></tr>
+<tr role="row"><th role="rowheader" scope="row">One clear thing for today</th><td role="cell" class="c-g" data-app="Gildstep"><p class="cv y"><svg aria-hidden="true"><use href="#i-check"/></svg>Yes</p><p class="cn">Today's One Thing.</p></td><td role="cell" class="c-griply" data-app="Griply"><p class="cv">A Today list</p><p class="cn">Tasks and habits for the day.</p></td><td role="cell" class="c-streaks" data-app="Streaks"><p class="cv p"><i aria-hidden="true"></i>Partly</p><p class="cn">A Lock Screen widget can show your next task.</p></td><td role="cell" class="c-habitica" data-app="Habitica"><p class="cv">Three lists</p><p class="cn">Habits, Dailies and To Do's.</p></td><td role="cell" class="c-meplus" data-app="Me+"><p class="cv">A daily schedule</p><p class="cn">Your routine as a to-do list.</p></td></tr>
+<tr role="row"><th role="rowheader" scope="row">Built-in app blocking</th><td role="cell" class="c-g" data-app="Gildstep"><p class="cv y"><svg aria-hidden="true"><use href="#i-check"/></svg>Yes</p><p class="cn">Free up to 25 minutes, any length with Premium.</p></td><td role="cell" class="c-griply" data-app="Griply"><p class="cv nl">Not listed</p><p class="cn">Focus blocks reserve time on your calendar.</p></td><td role="cell" class="c-streaks" data-app="Streaks"><p class="cv n"><i aria-hidden="true"></i>No</p><p class="cn">It tracks Screen Time and doesn't block.</p></td><td role="cell" class="c-habitica" data-app="Habitica"><p class="cv nl">Not listed</p></td><td role="cell" class="c-meplus" data-app="Me+"><p class="cv nl">Not listed</p></td></tr>
+<tr role="row"><th role="rowheader" scope="row">Friends and community</th><td role="cell" class="c-g" data-app="Gildstep"><p class="cv y"><svg aria-hidden="true"><use href="#i-check"/></svg>Yes</p><p class="cn">A Feed, friends and cheers.</p></td><td role="cell" class="c-griply" data-app="Griply"><p class="cv">Outside the app</p><p class="cn">Communities on Discord and Reddit.</p></td><td role="cell" class="c-streaks" data-app="Streaks"><p class="cv p"><i aria-hidden="true"></i>Partly</p><p class="cn">Share a task with the people you invite.</p></td><td role="cell" class="c-habitica" data-app="Habitica"><p class="cv y"><svg aria-hidden="true"><use href="#i-check"/></svg>Yes</p><p class="cn">Parties, quests with friends and Challenges.</p></td><td role="cell" class="c-meplus" data-app="Me+"><p class="cv nl">Not listed</p></td></tr>
+<tr role="row"><th role="rowheader" scope="row">Open-ended daily habits</th><td role="cell" class="c-g" data-app="Gildstep"><p class="cv n"><i aria-hidden="true"></i>No</p><p class="cn">Every goal has an end date.</p></td><td role="cell" class="c-griply" data-app="Griply"><p class="cv y"><svg aria-hidden="true"><use href="#i-check"/></svg>Yes</p><p class="cn">Alongside your goals.</p></td><td role="cell" class="c-streaks" data-app="Streaks"><p class="cv y"><svg aria-hidden="true"><use href="#i-check"/></svg>Yes</p><p class="cn">It's what it's built for.</p></td><td role="cell" class="c-habitica" data-app="Habitica"><p class="cv y"><svg aria-hidden="true"><use href="#i-check"/></svg>Yes</p><p class="cn">Habits and Dailies.</p></td><td role="cell" class="c-meplus" data-app="Me+"><p class="cv y"><svg aria-hidden="true"><use href="#i-check"/></svg>Yes</p><p class="cn">Daily routines and habits.</p></td></tr>
+<tr role="row"><th role="rowheader" scope="row">Runs on</th><td role="cell" class="c-g" data-app="Gildstep"><p class="cv">iPhone only</p><p class="cn"><span data-mode="waitlist">Coming soon.</span><span data-mode="beta">In beta.</span></p></td><td role="cell" class="c-griply" data-app="Griply"><p class="cv">iPhone, Android, Mac, Windows, web</p></td><td role="cell" class="c-streaks" data-app="Streaks"><p class="cv">iPhone, iPad, Apple Watch, Mac, Vision Pro</p></td><td role="cell" class="c-habitica" data-app="Habitica"><p class="cv">iPhone, iPad, Android, web</p></td><td role="cell" class="c-meplus" data-app="Me+"><p class="cv">iPhone, Android</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cmp-foot">
+<p class="fine"><b>Compared November 2026.</b> Everything about the other apps comes from their own App Store listings and websites. "Not listed" means neither mentions it. Gildstep isn't affiliated with these apps, and their names belong to their makers. Spot something out of date? <a href="mailto:support@gildstep.com">Tell us</a>.</p>
+<ul class="cmp-src fine">
+<li><b>Griply</b> <a href="https://apps.apple.com/us/app/daily-planner-goals-griply/id1556692747" rel="noopener nofollow">App Store</a> <a href="https://griply.app/" rel="noopener nofollow">griply.app</a> <a href="https://griply.app/help/features/goals" rel="noopener nofollow">goals</a> <a href="https://griply.app/changelog/goal-templates-icons-habit-grouping-color-coding" rel="noopener nofollow">templates</a> <a href="https://griply.app/help/integrations/ai-integrations" rel="noopener nofollow">AI integrations</a> <a href="https://griply.app/help/features/focus-blocks" rel="noopener nofollow">focus blocks</a> <a href="https://griply.app/download" rel="noopener nofollow">downloads</a> <a href="https://play.google.com/store/apps/details?id=app.griply" rel="noopener nofollow">Google Play</a></li>
+<li><b>Streaks</b> <a href="https://apps.apple.com/us/app/streaks/id963034692" rel="noopener nofollow">App Store</a> <a href="https://streaks.app/" rel="noopener nofollow">streaks.app</a> <a href="https://streaks.app/help/break-it-down/" rel="noopener nofollow">Break It Down</a> <a href="https://streaks.app/help/widgets-overview/" rel="noopener nofollow">widgets</a> <a href="https://streaks.app/guides/screen-time-build-or-break-a-habit/" rel="noopener nofollow">Screen Time</a> <a href="https://streaks.app/help/how-to-share/" rel="noopener nofollow">sharing</a></li>
+<li><b>Habitica</b> <a href="https://apps.apple.com/us/app/habitica-gamified-taskmanager/id994882113" rel="noopener nofollow">App Store</a> <a href="https://play.google.com/store/apps/details?id=com.habitrpg.android.habitica" rel="noopener nofollow">Google Play</a> <a href="https://habitica.com/static/features" rel="noopener nofollow">features</a> <a href="https://habitica.com/static/faq" rel="noopener nofollow">FAQ</a></li>
+<li><b>Me+</b> <a href="https://apps.apple.com/us/app/me-lifestyle-routine/id1596403446" rel="noopener nofollow">App Store</a> <a href="https://play.google.com/store/apps/details?id=daily.planner.routine.habits" rel="noopener nofollow">Google Play</a> <a href="https://enerjoy.life/me-plus/" rel="noopener nofollow">enerjoy.life</a></li>
+</ul>
+</div>
+</div>
+</section>
+<!-- compare:end -->
 
 <!-- ───────────── 6. Pricing and questions ───────────── -->
 <section class="pricing" id="pricing" data-spy>

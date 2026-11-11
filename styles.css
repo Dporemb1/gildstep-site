@@ -359,7 +359,7 @@ h2 { font-size: clamp(34px, 4.8vw, 62px); line-height: 1.02; letter-spacing: -0.
 .m-steps { margin: 0 3px; padding: 0 16px; overflow: hidden; }
 .m-steps-h { display: grid; gap: 10px; padding: 14px 0 12px; }
 .m-bar { display: block; height: 4px; border-radius: 4px; background: rgba(232, 131, 74, 0.16); }
-.m-bar i { display: block; width: 33.3%; height: 100%; border-radius: 4px; background: var(--tint); }
+.m-bar i { display: block; width: 0; height: 100%; border-radius: 4px; background: var(--tint); }
 .m-step { display: flex; align-items: center; gap: 12px; min-height: 52px; border-top: 0.5px solid #2a251b; font: 400 15px/20px var(--body); }
 .m-step span { flex: 1; }
 .m-box { width: 24px; height: 24px; border-radius: 7px; border: 2px solid rgba(232, 131, 74, 0.6); flex: none; }
@@ -442,12 +442,13 @@ h1 span { display: block; }
 .js [data-reveal].in { opacity: 1; transform: none; }
 
 /* A hairline between sections that fades out toward the page's edges. */
-.inside, .story, .pricing, .join { position: relative; }
-.inside::before, .story::before, .pricing::before, .join::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, rgba(255, 240, 210, 0), rgba(255, 240, 210, 0.13) 22%, rgba(255, 240, 210, 0.13) 78%, rgba(255, 240, 210, 0)); }
+.inside, .story, .compare, .pricing, .join { position: relative; }
+.inside::before, .story::before, .compare::before, .pricing::before, .join::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, rgba(255, 240, 210, 0), rgba(255, 240, 210, 0.13) 22%, rgba(255, 240, 210, 0.13) 78%, rgba(255, 240, 210, 0)); }
 
 /* ───────────── 2. The Tuesday line ───────────── */
 .climb { position: relative; }
-.quiet { padding: calc(var(--sec) * 0.45) 0 var(--sec); }
+/* Room above it, so the line is its own moment and not a caption under the phones. */
+.quiet { padding: calc(var(--sec) * 1.3) 0 var(--sec); }
 .statement { max-width: 20em; font: 700 clamp(27px, 4vw, 52px)/1.14 var(--disp); letter-spacing: -0.03em; color: #cdc5b6; text-wrap: balance; }
 .statement-b { margin-top: 0.5em; font: 700 clamp(27px, 4vw, 52px)/1.14 var(--disp); letter-spacing: -0.03em; color: var(--ink); }
 
@@ -493,19 +494,36 @@ h1 span { display: block; }
 .tile small { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 6px; font-weight: 600; font-size: 12.5px; line-height: 16px; color: var(--ink3); white-space: nowrap; }
 .tile em { font-style: normal; font-weight: 700; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); }
 .tile b { font: 700 clamp(13px, 1.5vw, 16px)/1.25 var(--disp); letter-spacing: -0.01em; color: var(--ink); overflow-wrap: break-word; }
-.wk b { font-size: clamp(12.5px, 1.3vw, 14.5px); }
-@media (max-width: 479px) { .wk em { display: none; } }
+.wk b { font-size: clamp(12.5px, 1.3vw, 14.5px); text-wrap: balance; }
+/* A week is labelled the way the app labels it: by its dates, or "This week". */
+.wk { align-content: stretch; grid-template-rows: auto 1fr auto; }
+.wk small { display: block; white-space: normal; min-height: 30px; font-size: 12px; line-height: 15px; }
+.wk small span { display: block; white-space: nowrap; }
+.wk small em { display: block; font-size: min(11.5px, 3.05vw); letter-spacing: 0; text-transform: none; white-space: nowrap; }
+.wk small .wk-d { font-size: min(11px, 2.9vw); color: var(--text); }
+@media (max-width: 719px) { .wk { padding-left: 8px; padding-right: 8px; } }
 .tile.now { border-color: rgba(233, 185, 73, 0.6); background: linear-gradient(170deg, #261e10, #17140e); box-shadow: var(--edge), var(--lift), 0 0 44px -16px rgba(242, 198, 90, 0.5); }
 .tile.now small { color: var(--ink); }
-/* what each one breaks into next: a month's four weeks, a week's days (the runs lit) */
-.t-split, .t-days { display: flex; margin-top: 4px; }
-.t-split { gap: 4px; }
-.t-split i { flex: 1; height: 4px; border-radius: 2px; background: rgba(242, 198, 90, 0.28); }
-.t-days { gap: 3px; }
-.t-days i { width: 6px; height: 6px; border-radius: 50%; background: rgba(255, 244, 220, 0.14); }
-.t-days .on { background: rgba(242, 198, 90, 0.55); }
-.tile.now .t-split i { background: rgba(242, 198, 90, 0.85); }
-.tile.now .t-days .on { background: var(--gold); }
+/* Under a month: one segment per week, gold once the week is behind you
+   (outlined for the week you are in). Under a week that has started: how
+   many of its runs are done. A week that hasn't started shows only its
+   target. */
+.t-split { display: flex; gap: 4px; margin-top: 4px; }
+.t-split i { flex: 1; height: 4px; border-radius: 2px; background: rgba(255, 244, 220, 0.13); }
+.t-split .on { background: rgba(242, 198, 90, 0.6); }
+.t-split .cur { box-shadow: inset 0 0 0 1px rgba(242, 198, 90, 0.75); }
+.tile.now .t-split .on { background: var(--gold); }
+.t-prog { display: grid; gap: 5px; margin-top: 4px; font-weight: 600; font-size: 10.5px; line-height: 13px; color: var(--ink3); white-space: nowrap; }
+.t-prog > i { display: block; height: 4px; border-radius: 2px; background: rgba(255, 244, 220, 0.13); overflow: hidden; }
+.t-prog > i i { display: block; width: 0; height: 100%; border-radius: 2px; background: rgba(242, 198, 90, 0.6); transition: width 0.6s var(--move); }
+.t-prog.p2 > i i { width: 66.667%; }
+.t-prog.p3 > i i { width: 100%; }
+.tile.now .t-prog { color: var(--text); }
+.tile.now .t-prog > i i { background: var(--gold); }
+/* today's run counts once the One Thing is checked (site.js sets .checked) */
+.w-done, .checked .w-open { display: none; }
+.checked .w-done { display: inline; }
+.checked .wk.now .t-prog > i i { width: 33.333%; }
 .lv-today .ot { box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.7), 0 0 60px -22px rgba(242, 198, 90, 0.4); }
 .today-done { display: flex; align-items: center; gap: 8px; margin: 12px 4px 0; font: 700 19px/1.2 var(--disp); letter-spacing: -0.015em; }
 /* The flame's light is the app's (FlameGlow, "lg"): 3.5 times the flame,
@@ -520,10 +538,21 @@ h1 span { display: block; }
   .stage-glow { left: -36px; right: -36px; }
   .lv-months, .lv-weeks { --tg: 10px; }
   .tile { padding: 14px 14px 16px; }
+  .wk small { min-height: 0; line-height: 16px; }
+  .wk small span { display: inline; }
+  .wk small em { font-size: inherit; }
+  .wk small .wk-d { display: none; }
+  .t-prog { font-size: 12px; line-height: 15px; }
 }
 @media (min-width: 960px) {
   .how-grid { grid-template-columns: 1fr 1.08fr; gap: 72px; align-items: center; }
   .how-copy h2 { margin-bottom: 30px; }
+}
+@media (min-width: 960px) and (max-width: 1199px) {
+  /* narrower tiles beside the words: a week's dates take two lines, as on a phone */
+  .wk small { min-height: 32px; }
+  .wk small span { display: block; }
+  .wk small .wk-d { display: block; font-size: inherit; }
 }
 
 /* Pinned: one screen, five moments (site.js sets .pin on <html>, and
@@ -550,7 +579,7 @@ h1 span { display: block; }
 .pin .b2 li::before { background: var(--gold); box-shadow: 0 0 14px rgba(242, 198, 90, 0.75); }
 
 .pin .stage {
-  --gf: 262px; --gp: 54px; --mf: 112px; --mp: 38px; --wf: 92px; --wp: 34px; --oth: 206px; --dn: 42px; --k: 1;
+  --gf: 262px; --gp: 54px; --mf: 112px; --mp: 38px; --wf: 124px; --wp: 34px; --oth: 206px; --dn: 42px; --k: 1;
   --y1: calc(var(--gp) + var(--c)); --y2: calc(var(--y1) + var(--mp) + var(--c)); --y3: calc(var(--y2) + var(--wp) + var(--c));
   --S: calc(var(--y3) + var(--oth) + var(--dn));
   height: calc(var(--S) * var(--k));
@@ -595,10 +624,11 @@ h1 span { display: block; }
 
 /* months: under the goal until it lifts, then three */
 .mo:nth-child(1), .wk:nth-child(1) { --i: 0; } .mo:nth-child(2), .wk:nth-child(2) { --i: 1; } .mo:nth-child(3), .wk:nth-child(3) { --i: 2; } .wk:nth-child(4) { --i: 3; }
-.wk:nth-child(1) { --d: 1; } .wk:nth-child(2) { --d: 0; } .wk:nth-child(3) { --d: 1; } .wk:nth-child(4) { --d: 2; }
+.wk:nth-child(1) { --d: 2; } .wk:nth-child(2) { --d: 1; } .wk:nth-child(3) { --d: 0; } .wk:nth-child(4) { --d: 1; }
 .pin .tile { overflow: hidden; transition: height 0.8s var(--move), opacity 0.5s var(--out), transform 0.9s var(--out), border-color 0.5s ease, box-shadow 0.5s ease; }
-.pin .tile b, .pin .t-split, .pin .t-days { transition: opacity 0.35s ease; }
-.pin .t-split, .pin .t-days { position: absolute; left: 10px; right: 10px; bottom: 12px; margin: 0; }
+.pin .tile b, .pin .t-split, .pin .t-prog, .pin .wk small > :nth-child(2) { transition: opacity 0.35s ease; }
+.pin .t-split, .pin .t-prog { position: absolute; left: 10px; right: 10px; bottom: 12px; margin: 0; }
+.pin .wk .t-prog { left: 8px; right: 8px; }
 .pin .mo { height: var(--mf); opacity: 0; transform: translate(calc((1 - var(--i)) * 8px), 10px) scale(1.04, 1); }
 .pin .mo b { font-size: 13px; }
 .pin .ge1 .mo { opacity: 1; transform: none; transition-delay: 0.12s; }
@@ -608,13 +638,12 @@ h1 span { display: block; }
 /* weeks: out of this month */
 .pin .wk { height: var(--wf); opacity: 0; transform: translate(calc((1.5 - var(--i)) * (100% + var(--tg, 8px))), calc(-0.5 * var(--mp) - var(--c))) scale(0.6); }
 .pin .wk b { font-size: 12.5px; }
-.pin .wk em { display: none; }
 .pin .ge2 .wk { opacity: 1; transform: none; transition-delay: calc(0.22s + var(--d) * 0.07s); }
 .pin .ge3 .wk { height: var(--wp); transition-delay: 0s; }
 .pin .ge3 .wk:not(.now) { opacity: 0.55; }
-.pin .ge3 .wk .t-days, .pin .ge3 .wk b { opacity: 0; }
-/* and one card, out of this week (week 6 is the second of four) */
-.pin .lv-today .ot { opacity: 0; transform-origin: 37.5% 0; transform: translateY(calc(-0.5 * var(--wp) - var(--c))) scale(0.3); transition: opacity 0.5s var(--out), transform 0.9s var(--out); }
+.pin .ge3 .wk .t-prog, .pin .ge3 .wk b, .pin .ge3 .wk small > :nth-child(2) { opacity: 0; }
+/* and one card, out of this week (the third of the four) */
+.pin .lv-today .ot { opacity: 0; transform-origin: 62.5% 0; transform: translateY(calc(-0.5 * var(--wp) - var(--c))) scale(0.3); transition: opacity 0.5s var(--out), transform 0.9s var(--out); }
 .pin .ge3 .lv-today .ot { opacity: 1; transform: none; transition-delay: 0.22s; }
 .pin .today-done { opacity: 0; transform: translateY(8px); transition: opacity 0.5s var(--out), transform 0.7s var(--out); }
 .pin .ge4 .today-done { opacity: 1; transform: none; transition-delay: 0.5s; }
@@ -638,7 +667,7 @@ h1 span { display: block; }
   .pin.pin-tight .ge4 .how-note { opacity: 1; }
 }
 @media (min-width: 720px) {
-  .pin .stage { --gf: 296px; --gp: 76px; --mf: 150px; --mp: 92px; --wf: 122px; --wp: 80px; --oth: 200px; --dn: 50px; }
+  .pin .stage { --gf: 296px; --gp: 76px; --mf: 150px; --mp: 92px; --wf: 132px; --wp: 80px; --oth: 200px; --dn: 50px; }
   .pin .gcard { --gx: 28px; }
   .pin .g-ico { top: 28px; width: 48px; height: 48px; border-radius: 14px; }
   .pin .g-ico svg { width: 26px; height: 26px; }
@@ -652,10 +681,10 @@ h1 span { display: block; }
   .pin .ge1 .g-meta2 { opacity: 1; transition-delay: 0.5s; }
   .pin .g-split { bottom: 56px; }
   .pin .g-months { bottom: 28px; font-size: 12.5px; }
-  .pin .t-split, .pin .t-days { left: 14px; right: 14px; bottom: 16px; }
+  .pin .t-split, .pin .t-prog, .pin .wk .t-prog { left: 14px; right: 14px; bottom: 16px; }
+  .pin .ge3 .wk small > :nth-child(2) { opacity: 1; }
   .pin .mo b { font-size: 16px; }
   .pin .wk b { font-size: 14px; }
-  .pin .wk em { display: inline; }
   .pin .ge2 .mo b, .pin .ge3 .wk b { opacity: 1; }
 }
 @media (min-width: 960px) {
@@ -680,7 +709,7 @@ h1 span { display: block; }
 }
 @media (min-width: 960px) and (max-width: 1199px) {
   /* narrower cards beside the words: room for a third line */
-  .pin .stage { --mf: 168px; --mp: 110px; }
+  .pin .stage { --mf: 168px; --mp: 110px; --wf: 148px; --wp: 96px; }
   .pin .mo b { font-size: 15px; }
 }
 @media (min-width: 960px) and (max-height: 739px) {
@@ -867,6 +896,68 @@ html:not(.js) .fin-done { display: none; }
 .story-screens figcaption { margin-top: 14px; text-align: center; font-weight: 600; font-size: 14px; color: var(--ink2); }
 @media (min-width: 480px) { .story-screens .phone { --pw: 200; } }
 @media (min-width: 960px) { .story-wrap.has-shot { grid-template-columns: 1fr auto; gap: 72px; } .story-screens .phone { --pw: 220; } }
+
+/* ───────────── How Gildstep compares ─────────────
+   A real table. On a laptop: one column per app. Below 900px it would
+   need sideways scrolling, so each row stacks instead (what matters, then
+   Gildstep beside one other app) and four radio buttons choose the app.
+   The buttons are plain HTML: it works without the script. */
+.compare { padding: var(--sec) 0; }
+.compare h2 { text-align: center; }
+.cmp-why { max-width: 35em; margin: 0 auto; text-align: center; font-size: clamp(17px, 1.5vw, 19px); line-height: 1.55; color: var(--text); text-wrap: pretty; }
+.cmp-why b { font-weight: 600; color: var(--ink); }
+.cmp { position: relative; max-width: 560px; margin: 34px auto 0; }
+.cmp-r { position: absolute; left: 0; top: 0; width: 1px; height: 1px; margin: 0; opacity: 0; pointer-events: none; }
+.cmp-pick { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; margin-bottom: 12px; padding: 4px; border-radius: 999px; background: rgba(255, 244, 220, 0.05); border: 1px solid var(--line); }
+.cmp-pick span { grid-column: 1 / -1; position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.cmp-pick label { display: grid; place-items: center; min-height: 44px; border-radius: 999px; font-weight: 600; font-size: 14.5px; color: var(--ink2); cursor: pointer; -webkit-tap-highlight-color: transparent; transition: background-color 0.2s ease, color 0.2s ease; }
+#cmp-griply:checked ~ .cmp-pick [for="cmp-griply"], #cmp-streaks:checked ~ .cmp-pick [for="cmp-streaks"], #cmp-habitica:checked ~ .cmp-pick [for="cmp-habitica"], #cmp-meplus:checked ~ .cmp-pick [for="cmp-meplus"] { background: rgba(242, 198, 90, 0.16); box-shadow: inset 0 0 0 1px rgba(242, 198, 90, 0.45); color: var(--ink); }
+#cmp-griply:focus-visible ~ .cmp-pick [for="cmp-griply"], #cmp-streaks:focus-visible ~ .cmp-pick [for="cmp-streaks"], #cmp-habitica:focus-visible ~ .cmp-pick [for="cmp-habitica"], #cmp-meplus:focus-visible ~ .cmp-pick [for="cmp-meplus"] { outline: 2px solid var(--gold-l); outline-offset: 2px; }
+.cmp-card { border-radius: 24px; background: var(--card); border: 1px solid var(--line); box-shadow: var(--edge), var(--lift); overflow: hidden; }
+.cmp-t { width: 100%; border-collapse: separate; border-spacing: 0; text-align: left; }
+.cmp-t th { font: 700 17px/1.3 var(--disp); letter-spacing: -0.015em; color: var(--ink); text-align: left; }
+.cv { display: flex; align-items: center; gap: 7px; font-weight: 600; font-size: 15px; line-height: 1.3; color: var(--ink); }
+.cv svg { flex: none; width: 16px; height: 16px; }
+.cv i { flex: none; }
+.cv.y { color: var(--gold); }
+.cv.p i { width: 13px; height: 13px; border-radius: 50%; border: 1.5px solid var(--gold); background: linear-gradient(90deg, var(--gold) 50%, rgba(242, 198, 90, 0) 50%); }
+.cv.n { color: var(--ink2); }
+.cv.n i { width: 11px; height: 2px; border-radius: 1px; background: var(--ink3); }
+.cv.nl { font-weight: 500; color: var(--ink3); }
+.cn { margin-top: 4px; font-size: 14px; line-height: 1.45; color: var(--text); }
+.cn:empty { display: none; }
+.cmp-foot { display: grid; gap: 12px; max-width: 880px; margin: 22px auto 0; }
+.cmp-foot .fine { max-width: none; }
+.cmp-foot b { font-weight: 600; color: var(--text); }
+.cmp-src { display: grid; gap: 6px; }
+.cmp-src b { margin-right: 4px; }
+.cmp-src a { margin-right: 8px; white-space: nowrap; }
+@media (max-width: 899px) {
+  .cmp-t, .cmp-t tbody { display: block; }
+  .cmp-t thead { display: none; }
+  .cmp-t tr { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 16px; padding: 14px 18px 16px; }
+  .cmp-t tr + tr { border-top: 1px solid var(--line-s); }
+  .cmp-t tbody th { grid-column: 1 / -1; margin-bottom: 8px; }
+  .cmp-t td { display: none; padding: 0; }
+  .cmp-t td.c-g, #cmp-griply:checked ~ .cmp-card .c-griply, #cmp-streaks:checked ~ .cmp-card .c-streaks, #cmp-habitica:checked ~ .cmp-card .c-habitica, #cmp-meplus:checked ~ .cmp-card .c-meplus { display: block; }
+  .cmp-t td::before { content: attr(data-app); display: block; margin-bottom: 4px; font-weight: 700; font-size: 11px; line-height: 14px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink3); }
+  .cmp-t td.c-g::before { color: var(--gold); }
+}
+@media (min-width: 900px) {
+  .cmp { max-width: none; margin-top: 44px; }
+  .cmp-r, .cmp-pick { display: none; }
+  .cmp-t { table-layout: fixed; }
+  .cmp-t th, .cmp-t td { padding: 13px 14px 14px; vertical-align: top; }
+  .cmp-t tbody th, .cmp-t td { border-top: 1px solid var(--line-s); }
+  .cmp-t thead th { padding: 16px 14px 13px; font-size: 18px; }
+  .cmp-t tbody th { font-size: 15.5px; }
+  .cmp-t thead th:first-child { width: 15.5%; }
+  .cmp-t th:first-child { padding-left: 20px; }
+  .cmp-t .c-g { background: rgba(242, 198, 90, 0.055); box-shadow: inset 1px 0 0 rgba(242, 198, 90, 0.2), inset -1px 0 0 rgba(242, 198, 90, 0.2); }
+  .cmp-t thead .c-g { color: var(--gold); }
+  .cv { font-size: 14.5px; }
+  .cn { font-size: 13.5px; }
+}
 
 /* ───────────── 6. Pricing and questions ───────────── */
 .pricing { padding: var(--sec) 0 calc(var(--sec) * 0.6); }
