@@ -401,8 +401,16 @@
       }
       pinOn = pinWanted;
       root.classList.toggle("pin", pinOn);
+      // "+20 XP" rises from the circle toward the "Set 6:40 AM" above it:
+      // only as far as the room between them (styles.css, xp-float).
+      var setAt = $(".ot-set", ot);
+      var room = pageTop($(".ot-circle", ot), ot) - pageTop(setAt, ot) - setAt.offsetHeight;
+      ot.style.setProperty("--xr", Math.max(4, Math.min(32, room - 12)) + "px");
       stage.style.removeProperty("--oth");
       stage.style.removeProperty("--k");
+      ["--mf", "--mp", "--wf", "--wp"].forEach(function (name) {
+        stage.style.removeProperty(name);
+      });
       if (!pinOn) {
         // Laid out whole, with the card done.
         phase = -1;
@@ -414,20 +422,60 @@
       }
       var head = $(".how-head", how);
       how.style.setProperty("--hh", (root.classList.contains("pin-tight") ? head.offsetHeight + 8 : 0) + "px");
-      // The One Thing card's real height, then the tree's, then how much of
-      // the screen there is for it.
+      // The tiles' heights, the One Thing card's real height, then the
+      // tree's, then how much of the screen there is for it.
+      fitRows();
       stage.style.setProperty("--oth", ot.offsetHeight + "px");
       var full = tree.offsetHeight;
       var stacked = window.innerWidth < 960;
       var room = stacked ? pinEl.clientHeight - pageTop(stage, pinEl) - 14 : pinEl.clientHeight - 2 * 92;
       stage.style.setProperty("--k", Math.max(0.62, Math.min(1, room / full)).toFixed(4));
-      // Scaled down, the tree is laid out wider, so the card may be shorter.
+      // Scaled down, the tree is laid out wider, so the tiles and the card
+      // may be shorter.
+      fitRows();
       stage.style.setProperty("--oth", ot.offsetHeight + "px");
       var pad = parseFloat(getComputedStyle(how).paddingTop) || 0;
       pinStart = pageTop(how) + pad;
       pinRun = Math.max(1, how.offsetHeight - pad - pinEl.offsetHeight);
       drawLinks();
       moveMarker();
+    }
+    // While pinned, a row of tiles has two heights: in focus, and on the
+    // path once it has split. Both come from the row's tallest tile, so the
+    // tiles in a row stay the same height and each is tall enough for its
+    // label, its words and its bar, whatever the width or the font does to
+    // the line breaks. The heights in styles.css are the least they can be.
+    function fitRow(tiles, focusVar, pathVar, pathShowsWords) {
+      stage.style.removeProperty(focusVar);
+      stage.style.removeProperty(pathVar);
+      var set = getComputedStyle(stage);
+      var focus = parseFloat(set.getPropertyValue(focusVar)) || 0;
+      var onPath = parseFloat(set.getPropertyValue(pathVar)) || 0;
+      tiles.forEach(function (tile) {
+        var t = getComputedStyle(tile);
+        var gap = parseFloat(t.rowGap) || 0;
+        var top = parseFloat(t.paddingTop) + parseFloat(t.borderTopWidth);
+        var words = $("small", tile).offsetHeight + gap + $("b", tile).offsetHeight;
+        var foot = parseFloat(t.paddingBottom) + parseFloat(t.borderBottomWidth);
+        // In focus there is a bar under the words (a week that hasn't
+        // started has none).
+        var bar = $(".t-split, .t-prog", tile);
+        var barRoom = bar ? gap + (parseFloat(getComputedStyle(bar).marginTop) || 0) + bar.offsetHeight : 0;
+        focus = Math.max(focus, Math.ceil(top + words + barRoom + foot));
+        // On the path a tile keeps its words, or (on a phone) its label
+        // alone: a month's whole label, a week's first line.
+        var label = tile.classList.contains("wk") ? $("small", tile).firstElementChild : $("small", tile);
+        onPath = Math.max(onPath, Math.ceil(pathShowsWords ? top + words + foot : top + label.offsetHeight + 6));
+      });
+      stage.style.setProperty(focusVar, focus + "px");
+      stage.style.setProperty(pathVar, onPath + "px");
+    }
+    function fitRows() {
+      // From 720px a tile on the path keeps its words (styles.css); under
+      // that it shows its label alone.
+      var words = window.matchMedia("(min-width: 720px)").matches;
+      fitRow($$(".mo", tree), "--mf", "--mp", words);
+      fitRow($$(".wk", tree), "--wf", "--wp", words);
     }
     function phaseAt(y) {
       var p = (y - pinStart) / pinRun;
