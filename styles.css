@@ -46,21 +46,15 @@ body {
   margin: 0; background: var(--bg); color: var(--text);
   font: 400 17px/1.55 var(--body); -webkit-font-smoothing: antialiased; overflow-x: hidden; overflow-x: clip;
 }
-/* Depth, on tablets and wider: a very fine film grain in the page itself
-   (cards and phones sit crisp on top of it), and a gentle shading toward
-   the edges of the screen. Both still; neither takes a click. The grain is
-   a tile with one speck per device pixel (tools/grain.py makes the three
-   densities), so it is sharp on any screen. Phones get neither: at their
-   size the page is cleanest plain. */
+/* Depth, on tablets and wider: a gentle shading toward the edges of the
+   screen. Still, and it takes no click. The page background itself is one
+   flat color with soft gold light over it: no grain or noise anywhere. */
 @media (min-width: 768px) {
-  body { background-image: url("/assets/grain-1x.png"); background-size: 128px 128px; }
   body::before {
     content: ""; position: fixed; inset: 0; z-index: 40; pointer-events: none;
-    background: radial-gradient(130% 100% at 50% 38%, rgba(0, 0, 0, 0) 55%, rgba(0, 0, 0, 0.14) 78%, rgba(0, 0, 0, 0.36) 100%);
+    background: radial-gradient(130% 100% at 50% 38%, rgba(0, 0, 0, 0) 55%, rgba(0, 0, 0, 0.0166) 60%, rgba(0, 0, 0, 0.0438) 65%, rgba(0, 0, 0, 0.0773) 70%, rgba(0, 0, 0, 0.1157) 75%, rgba(0, 0, 0, 0.1581) 80%, rgba(0, 0, 0, 0.2041) 85%, rgba(0, 0, 0, 0.2532) 90%, rgba(0, 0, 0, 0.3053) 95%, rgba(0, 0, 0, 0.36) 100%);
   }
 }
-@media (min-width: 768px) and (-webkit-min-device-pixel-ratio: 1.01), (min-width: 768px) and (min-resolution: 1.01dppx) { body { background-image: url("/assets/grain-2x.png"); } }
-@media (min-width: 768px) and (-webkit-min-device-pixel-ratio: 2.01), (min-width: 768px) and (min-resolution: 2.01dppx) { body { background-image: url("/assets/grain-3x.png"); } }
 h1, h2, h3, p, ul, figure { margin: 0; }
 ul { padding: 0; list-style: none; }
 a { color: var(--gold-l); }
@@ -311,7 +305,10 @@ h2 { font-size: clamp(34px, 4.8vw, 62px); line-height: 1.02; letter-spacing: -0.
 @keyframes pop { 0% { transform: scale(0.7); } 22% { transform: scale(1.18); } 55% { transform: scale(0.96); } 100% { transform: none; } }
 @keyframes ember-ring { 0% { opacity: 0.8; transform: scale(0.6); } 100% { opacity: 0; transform: scale(1.9); } }
 @keyframes spark { 0% { opacity: 1; transform: rotate(var(--a)) translateX(0) scale(1); } 100% { opacity: 0; transform: rotate(var(--a)) translateX(var(--d)) scale(0.4); } }
-@keyframes xp-float { 0% { opacity: 0; transform: translateY(-4px); } 45% { opacity: 1; transform: translateY(-18px); } 100% { opacity: 0; transform: translateY(-32px); } }
+/* --xr is how far "+20 XP" may rise: site.js measures the room between the
+   circle and the "Set 6:40 AM" above it, so the two never cross (a one-line
+   title leaves less room than a two-line one). */
+@keyframes xp-float { 0% { opacity: 0; transform: translateY(calc(var(--xr, 7px) * -0.125)); } 45% { opacity: 1; transform: translateY(calc(var(--xr, 7px) * -0.56)); } 100% { opacity: 0; transform: translateY(calc(var(--xr, 7px) * -1)); } }
 
 /* the rest of Today: the focus card and the day's check-ins (no borders,
    as in the app) */
@@ -429,7 +426,7 @@ h2 { font-size: clamp(34px, 4.8vw, 62px); line-height: 1.02; letter-spacing: -0.
 
 /* ───────────── 1. Hero ───────────── */
 .hero { position: relative; padding: clamp(112px, 11vw, 150px) 0 0; text-align: center; overflow: hidden; }
-.hero-light { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(28% 36% at 50% 0%, rgba(255, 226, 150, 0.16), rgba(255, 226, 150, 0.06) 45%, rgba(255, 226, 150, 0) 100%), radial-gradient(76% 56% at 50% 0%, rgba(242, 198, 90, 0.17), rgba(242, 198, 90, 0.07) 40%, rgba(242, 198, 90, 0.02) 72%, rgba(242, 198, 90, 0) 100%); }
+.hero-light { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(28% 36% at 50% 0%, rgba(255, 226, 150, 0.16), rgba(255, 226, 150, 0.1439) 6%, rgba(255, 226, 150, 0.1283) 12%, rgba(255, 226, 150, 0.1135) 18%, rgba(255, 226, 150, 0.0974) 25%, rgba(255, 226, 150, 0.0827) 32%, rgba(255, 226, 150, 0.0679) 40%, rgba(255, 226, 150, 0.0555) 48%, rgba(255, 226, 150, 0.0433) 56%, rgba(255, 226, 150, 0.0314) 64%, rgba(255, 226, 150, 0.0205) 72%, rgba(255, 226, 150, 0.0112) 80%, rgba(255, 226, 150, 0.0043) 88%, rgba(255, 226, 150, 0.0011) 94%, rgba(255, 226, 150, 0) 100%), radial-gradient(76% 56% at 50% 0%, rgba(242, 198, 90, 0.17), rgba(242, 198, 90, 0.1523) 6%, rgba(242, 198, 90, 0.1354) 12%, rgba(242, 198, 90, 0.1195) 18%, rgba(242, 198, 90, 0.1022) 25%, rgba(242, 198, 90, 0.0863) 32%, rgba(242, 198, 90, 0.07) 40%, rgba(242, 198, 90, 0.0551) 48%, rgba(242, 198, 90, 0.0413) 56%, rgba(242, 198, 90, 0.0293) 64%, rgba(242, 198, 90, 0.02) 72%, rgba(242, 198, 90, 0.0121) 80%, rgba(242, 198, 90, 0.005) 88%, rgba(242, 198, 90, 0.0014) 94%, rgba(242, 198, 90, 0) 100%); }
 .hero-copy { position: relative; }
 h1 { font-size: clamp(46px, 9.6vw, 128px); line-height: 0.93; letter-spacing: -0.045em; padding-bottom: 0.08em; }
 h1 span { display: block; }
@@ -447,7 +444,7 @@ h1 span { display: block; }
   height: calc(var(--pm) * 1.66px + 30px); overflow: hidden;
   -webkit-mask-image: linear-gradient(#000 0, #000 72%, rgba(0, 0, 0, 0.55) 88%, rgba(0, 0, 0, 0) 100%); mask-image: linear-gradient(#000 0, #000 72%, rgba(0, 0, 0, 0.55) 88%, rgba(0, 0, 0, 0) 100%);
 }
-.hero-phones::before { content: ""; position: absolute; left: 50%; top: 0; width: calc(var(--pm) * 3.4px); height: calc(var(--pm) * 2.2px); margin-left: calc(var(--pm) * -1.7px); background: radial-gradient(closest-side, rgba(242, 198, 90, 0.2), rgba(242, 198, 90, 0.09) 40%, rgba(242, 198, 90, 0.03) 72%, rgba(242, 198, 90, 0)); pointer-events: none; }
+.hero-phones::before { content: ""; position: absolute; left: 50%; top: 0; width: calc(var(--pm) * 3.4px); height: calc(var(--pm) * 2.2px); margin-left: calc(var(--pm) * -1.7px); background: radial-gradient(closest-side, rgba(242, 198, 90, 0.2), rgba(242, 198, 90, 0.181) 6%, rgba(242, 198, 90, 0.1628) 12%, rgba(242, 198, 90, 0.1455) 18%, rgba(242, 198, 90, 0.1264) 25%, rgba(242, 198, 90, 0.1086) 32%, rgba(242, 198, 90, 0.09) 40%, rgba(242, 198, 90, 0.0727) 48%, rgba(242, 198, 90, 0.0566) 56%, rgba(242, 198, 90, 0.0422) 64%, rgba(242, 198, 90, 0.03) 72%, rgba(242, 198, 90, 0.0185) 80%, rgba(242, 198, 90, 0.0078) 88%, rgba(242, 198, 90, 0.0022) 94%, rgba(242, 198, 90, 0) 100%); pointer-events: none; }
 .phone-main { --pw: var(--pm); z-index: 2; transform: translate3d(0, var(--py, 0px), 0); }
 .phone-side { --pw: calc(var(--pm) * 0.87); margin-top: calc(var(--pm) * 0.26px); }
 .phone-l { margin-right: calc(var(--pm) * -0.1px); transform: translate3d(0, var(--py, 0px), 0) rotate(-4deg); transform-origin: 100% 40%; }
@@ -503,7 +500,7 @@ h1 span { display: block; }
 .lines li::before { content: ""; position: absolute; left: 0; top: 0.2em; bottom: 0.2em; width: 2.5px; border-radius: 2px; background: var(--gold); }
 
 .stage { position: relative; --c: 22px; }
-.stage-glow { position: absolute; left: -20px; right: -20px; top: 0; height: 440px; margin-top: -220px; background: radial-gradient(closest-side, rgba(242, 198, 90, 0.17), rgba(242, 198, 90, 0.075) 40%, rgba(242, 198, 90, 0.024) 72%, rgba(242, 198, 90, 0)); pointer-events: none; transform: translateY(50%); display: none; }
+.stage-glow { position: absolute; left: -20px; right: -20px; top: 0; height: 440px; margin-top: -220px; background: radial-gradient(closest-side, rgba(242, 198, 90, 0.17), rgba(242, 198, 90, 0.1535) 6%, rgba(242, 198, 90, 0.1377) 12%, rgba(242, 198, 90, 0.1227) 18%, rgba(242, 198, 90, 0.1063) 25%, rgba(242, 198, 90, 0.091) 32%, rgba(242, 198, 90, 0.075) 40%, rgba(242, 198, 90, 0.0602) 48%, rgba(242, 198, 90, 0.0464) 56%, rgba(242, 198, 90, 0.0341) 64%, rgba(242, 198, 90, 0.024) 72%, rgba(242, 198, 90, 0.0147) 80%, rgba(242, 198, 90, 0.0062) 88%, rgba(242, 198, 90, 0.0017) 94%, rgba(242, 198, 90, 0) 100%); pointer-events: none; transform: translateY(50%); display: none; }
 .tree { position: relative; display: grid; gap: var(--c); }
 .lv { position: relative; }
 .links { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
@@ -527,8 +524,11 @@ h1 span { display: block; }
 .tile em { font-style: normal; font-weight: 700; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); }
 .tile b { font: 700 clamp(13px, 1.5vw, 16px)/1.25 var(--disp); letter-spacing: -0.01em; color: var(--ink); overflow-wrap: break-word; }
 .wk b { font-size: clamp(12.5px, 1.3vw, 14.5px); text-wrap: balance; }
-/* A week is labelled the way the app labels it: by its dates, or "This week". */
+/* A week is labelled the way the app labels it: by its dates, or "This
+   week". The label has a row of its own above the step; neither row can
+   shrink under its words, so one is never drawn over the other. */
 .wk { align-content: stretch; grid-template-rows: auto 1fr auto; }
+.wk b { align-self: start; }
 .wk small { display: block; white-space: normal; min-height: 30px; font-size: 12px; line-height: 15px; }
 .wk small span { display: block; white-space: nowrap; }
 .wk small em { display: block; font-size: min(11.5px, 3.05vw); letter-spacing: 0; text-transform: none; white-space: nowrap; }
@@ -570,7 +570,7 @@ h1 span { display: block; }
   .stage-glow { left: -36px; right: -36px; }
   .lv-months, .lv-weeks { --tg: 10px; }
   .tile { padding: 14px 14px 16px; }
-  .wk small { min-height: 0; line-height: 16px; }
+  .wk small { min-height: 16px; line-height: 16px; }
   .wk small span { display: inline; }
   .wk small em { font-size: inherit; }
   .wk small .wk-d { display: none; }
@@ -593,7 +593,10 @@ h1 span { display: block; }
    --wp) once it has split. Rows sit where they end up (--y1 to --y3); the
    whole tree slides to stay centred as it grows (--S is its full height),
    and --k scales it to fit a short screen. site.js measures --oth, the
-   One Thing card's height, and sets --k. */
+   One Thing card's height, and sets --k. It also measures the tiles: the
+   month and week heights below are the least they can be, and site.js
+   raises them (fitRow) to what the tallest tile's label, text and bar
+   need, so a row's tiles stay the same height and nothing overlaps. */
 .pin .how { height: 400vh; padding: 0; margin-top: min(0px, calc((660px - 100vh) / 2)); }
 .pin .finish { margin-top: min(0px, calc((660px - 100vh) / 2)); }
 .pin .how-pin { position: sticky; top: 0; height: 100vh; height: 100svh; display: grid; align-items: center; }
@@ -641,7 +644,7 @@ h1 span { display: block; }
 .pin .g-ico { left: var(--gx); top: 20px; width: 40px; height: 40px; border-radius: 12px; transform-origin: 0 0; transition: transform 0.9s var(--move); }
 .pin .g-ico svg { width: 22px; height: 22px; }
 .pin .ge1 .g-ico { transform: translate(-6px, -8px) scale(0.75); }
-.pin .g-label { left: 70px; top: 32px; transition: opacity 0.35s ease; }
+.pin .g-label { left: 70px; top: 32px; transition: opacity 0.35s ease 0.4s; }
 /* the title steps aside first, then rises and shrinks beside the icon
    (and the other way round going back), so the two never cross */
 .pin .g-title { left: var(--gx); top: 90px; font-size: 28px; line-height: 1.05; white-space: nowrap; transition: transform 0.5s var(--move) 0.4s; }
@@ -649,34 +652,43 @@ h1 span { display: block; }
 .pin .ge1 .g-title { transform: translateX(34px); transition-delay: 0s; }
 .pin .ge1 .g-title span { transform: translateY(-72px) scale(0.607); }
 .pin .g-meta { left: var(--gx); top: 128px; font-size: 14.5px; white-space: nowrap; transition: opacity 0.35s ease; }
-.pin .g-split { left: var(--gx); right: var(--gx); bottom: 46px; width: auto; transition: opacity 0.35s ease; }
-.pin .g-months { display: flex; gap: 6px; left: var(--gx); right: var(--gx); bottom: 20px; font: 600 12px/16px var(--body); color: var(--ink3); transition: opacity 0.35s ease; }
+.pin .g-split { left: var(--gx); right: var(--gx); bottom: 46px; width: auto; transition: opacity 0.35s ease 0.55s; }
+.pin .g-months { display: flex; gap: 6px; left: var(--gx); right: var(--gx); bottom: 20px; font: 600 12px/16px var(--body); color: var(--ink3); transition: opacity 0.35s ease 0.55s; }
 .pin .g-months span { flex: 1; }
 .pin .ge1 .g-label, .pin .ge1 .g-meta, .pin .ge1 .g-split, .pin .ge1 .g-months { opacity: 0; }
+/* Going back, the label and the card's foot wait for the title to come
+   down and the card to grow, so they never cross it on the way. */
+.pin .ge1 .g-label, .pin .ge1 .g-split, .pin .ge1 .g-months { transition-delay: 0s; }
 
 /* months: under the goal until it lifts, then three */
 .mo:nth-child(1), .wk:nth-child(1) { --i: 0; } .mo:nth-child(2), .wk:nth-child(2) { --i: 1; } .mo:nth-child(3), .wk:nth-child(3) { --i: 2; } .wk:nth-child(4) { --i: 3; }
 .wk:nth-child(1) { --d: 2; } .wk:nth-child(2) { --d: 1; } .wk:nth-child(3) { --d: 0; } .wk:nth-child(4) { --d: 1; }
 .pin .tile { overflow: hidden; transition: height 0.8s var(--move), opacity 0.5s var(--out), transform 0.9s var(--out), border-color 0.5s ease, box-shadow 0.5s ease; }
 .pin .tile b, .pin .t-split, .pin .t-prog, .pin .wk small > :nth-child(2) { transition: opacity 0.35s ease; }
-.pin .t-split, .pin .t-prog { position: absolute; left: 10px; right: 10px; bottom: 12px; margin: 0; }
-.pin .wk .t-prog { left: 8px; right: 8px; }
+/* A tile's bar is its last row, at its foot: when the tile is short the
+   bar is pushed out of sight under the words, never drawn across them. */
+.pin .mo { align-content: stretch; grid-template-rows: auto 1fr auto; }
+.pin .mo b { align-self: start; }
 .pin .mo { height: var(--mf); opacity: 0; transform: translate(calc((1 - var(--i)) * 8px), 10px) scale(1.04, 1); }
 .pin .mo b { font-size: 13px; }
 .pin .ge1 .mo { opacity: 1; transform: none; transition-delay: 0.12s; }
 .pin .ge2 .mo { height: var(--mp); transition-delay: 0s; }
 .pin .ge2 .mo:not(.now) { opacity: 0.55; }
 .pin .ge2 .mo .t-split, .pin .ge2 .mo b { opacity: 0; }
-/* weeks: out of this month */
-.pin .wk { height: var(--wf); opacity: 0; transform: translate(calc((1.5 - var(--i)) * (100% + var(--tg, 8px))), calc(-0.5 * var(--mp) - var(--c))) scale(0.6); }
+/* weeks: out of this month. They start stacked on one spot, so a tile
+   only shows once it has slid clear of its neighbours (and going back it
+   fades before it slides home): their words never cross. The five times
+   are for height, opacity, transform, border and shadow. */
+.pin .wk { height: var(--wf); opacity: 0; transform: translate(calc((1.5 - var(--i)) * (100% + var(--tg, 8px))), calc(-0.5 * var(--mp) - var(--c))) scale(0.6); transition-duration: 0.8s, 0.2s, 0.9s, 0.5s, 0.5s; transition-delay: 0s, 0s, 0.16s, 0s, 0s; }
 .pin .wk b { font-size: 12.5px; }
-.pin .ge2 .wk { opacity: 1; transform: none; transition-delay: calc(0.22s + var(--d) * 0.07s); }
+.pin .ge2 .wk { opacity: 1; transform: none; --w: calc(0.22s + var(--d) * 0.07s); transition-duration: 0.8s, 0.32s, 0.9s, 0.5s, 0.5s; transition-timing-function: var(--move), ease-in, var(--out), ease, ease; transition-delay: 0s, calc(var(--w) + 0.1s), var(--w), 0s, 0s; }
 .pin .ge3 .wk { height: var(--wp); transition-delay: 0s; }
 .pin .ge3 .wk:not(.now) { opacity: 0.55; }
 .pin .ge3 .wk .t-prog, .pin .ge3 .wk b, .pin .ge3 .wk small > :nth-child(2) { opacity: 0; }
 /* and one card, out of this week (the third of the four) */
-.pin .lv-today .ot { opacity: 0; transform-origin: 62.5% 0; transform: translateY(calc(-0.5 * var(--wp) - var(--c))) scale(0.3); transition: opacity 0.5s var(--out), transform 0.9s var(--out); }
-.pin .ge3 .lv-today .ot { opacity: 1; transform: none; transition-delay: 0.22s; }
+/* (going back it fades at once, before the weeks above it have grown) */
+.pin .lv-today .ot { opacity: 0; transform-origin: 62.5% 0; transform: translateY(calc(-0.5 * var(--wp) - var(--c))) scale(0.3); transition: opacity 0.2s var(--out), transform 0.9s var(--out); }
+.pin .ge3 .lv-today .ot { opacity: 1; transform: none; transition-duration: 0.5s, 0.9s; transition-delay: 0.22s; }
 .pin .today-done { opacity: 0; transform: translateY(8px); transition: opacity 0.5s var(--out), transform 0.7s var(--out); }
 .pin .ge4 .today-done { opacity: 1; transform: none; transition-delay: 0.5s; }
 
@@ -713,7 +725,6 @@ h1 span { display: block; }
   .pin .ge1 .g-meta2 { opacity: 1; transition-delay: 0.5s; }
   .pin .g-split { bottom: 56px; }
   .pin .g-months { bottom: 28px; font-size: 12.5px; }
-  .pin .t-split, .pin .t-prog, .pin .wk .t-prog { left: 14px; right: 14px; bottom: 16px; }
   .pin .ge3 .wk small > :nth-child(2) { opacity: 1; }
   .pin .mo b { font-size: 16px; }
   .pin .wk b { font-size: 14px; }
@@ -779,7 +790,7 @@ h1 span { display: block; }
 .fs-facts small { font-size: 12.5px; color: var(--ink3); white-space: nowrap; }
 @media (max-width: 419px) { .fin-sheet { padding: 24px 18px; } .fs-facts div { padding: 12px 9px; } .fs-facts small { font-size: 12px; } }
 .hold { position: relative; display: grid; place-items: center; width: 116px; height: 116px; margin: 8px auto 0; padding: 0; border: 0; border-radius: 50%; background: none; cursor: pointer; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
-.hold::before { content: ""; position: absolute; inset: -34px; border-radius: 50%; background: radial-gradient(closest-side, rgba(242, 198, 90, 0.22), rgba(242, 198, 90, 0.09) 40%, rgba(242, 198, 90, 0.028) 72%, rgba(242, 198, 90, 0)); opacity: 0.55; transition: opacity 0.3s ease; pointer-events: none; }
+.hold::before { content: ""; position: absolute; inset: -34px; border-radius: 50%; background: radial-gradient(closest-side, rgba(242, 198, 90, 0.22), rgba(242, 198, 90, 0.1967) 6%, rgba(242, 198, 90, 0.1746) 12%, rgba(242, 198, 90, 0.1538) 18%, rgba(242, 198, 90, 0.1312) 25%, rgba(242, 198, 90, 0.1107) 32%, rgba(242, 198, 90, 0.09) 40%, rgba(242, 198, 90, 0.0715) 48%, rgba(242, 198, 90, 0.0546) 56%, rgba(242, 198, 90, 0.04) 64%, rgba(242, 198, 90, 0.028) 72%, rgba(242, 198, 90, 0.0171) 80%, rgba(242, 198, 90, 0.0072) 88%, rgba(242, 198, 90, 0.002) 94%, rgba(242, 198, 90, 0) 100%); opacity: 0.55; transition: opacity 0.3s ease; pointer-events: none; }
 .hold.holding::before { opacity: 1; }
 .hold > svg:first-child { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
 .hold .trk { fill: rgba(242, 198, 90, 0.08); stroke: rgba(242, 198, 90, 0.2); stroke-width: 5; transition: fill 0.2s ease; }
@@ -802,7 +813,7 @@ html:not(.js) .fin-done { display: none; }
 .finish.done .fin-done > .medal-stage { transition-delay: 0s; }
 /* the light: one soft disc behind the medal, never the section. It
    flares, then settles within a second. */
-.fin-halo { position: absolute; left: 50%; top: calc(var(--m) * 1.1); width: calc(var(--m) * 3.3); height: calc(var(--m) * 3.3); margin: calc(var(--m) * -1.65); border-radius: 50%; background: radial-gradient(closest-side, rgba(242, 198, 90, 0.4), rgba(242, 198, 90, 0.18) 40%, rgba(242, 198, 90, 0.056) 72%, rgba(242, 198, 90, 0)); opacity: 0; pointer-events: none; }
+.fin-halo { position: absolute; left: 50%; top: calc(var(--m) * 1.1); width: calc(var(--m) * 3.3); height: calc(var(--m) * 3.3); margin: calc(var(--m) * -1.65); border-radius: 50%; background: radial-gradient(closest-side, rgba(242, 198, 90, 0.4), rgba(242, 198, 90, 0.3623) 6%, rgba(242, 198, 90, 0.3262) 12%, rgba(242, 198, 90, 0.2917) 18%, rgba(242, 198, 90, 0.2536) 25%, rgba(242, 198, 90, 0.2178) 32%, rgba(242, 198, 90, 0.18) 40%, rgba(242, 198, 90, 0.1442) 48%, rgba(242, 198, 90, 0.1104) 56%, rgba(242, 198, 90, 0.0804) 64%, rgba(242, 198, 90, 0.056) 72%, rgba(242, 198, 90, 0.0342) 80%, rgba(242, 198, 90, 0.0143) 88%, rgba(242, 198, 90, 0.004) 94%, rgba(242, 198, 90, 0) 100%); opacity: 0; pointer-events: none; }
 .finish.done .fin-halo { opacity: 0.5; animation: halo 1s var(--out); }
 @keyframes halo { 0% { opacity: 0; transform: scale(0.5); } 30% { opacity: 1; transform: scale(1.06); } 100% { opacity: 0.5; transform: none; } }
 /* confetti: out from the medal, then down (site.js sets where each goes) */
@@ -849,7 +860,7 @@ html:not(.js) .fin-done { display: none; }
 @media (min-width: 720px) { .fin-stage { --m: 188px; min-height: 720px; } }
 
 /* ───────────── 4. Progress, Focus, Community ───────────── */
-.inside { padding: var(--sec) 0; background: radial-gradient(60% 460px at 50% 0, rgba(242, 198, 90, 0.06), rgba(242, 198, 90, 0.026) 40%, rgba(242, 198, 90, 0.008) 72%, rgba(242, 198, 90, 0)); }
+.inside { padding: var(--sec) 0; background: radial-gradient(60% 460px at 50% 0, rgba(242, 198, 90, 0.06), rgba(242, 198, 90, 0.0541) 6%, rgba(242, 198, 90, 0.0484) 12%, rgba(242, 198, 90, 0.043) 18%, rgba(242, 198, 90, 0.0371) 25%, rgba(242, 198, 90, 0.0317) 32%, rgba(242, 198, 90, 0.026) 40%, rgba(242, 198, 90, 0.0207) 48%, rgba(242, 198, 90, 0.0158) 56%, rgba(242, 198, 90, 0.0115) 64%, rgba(242, 198, 90, 0.008) 72%, rgba(242, 198, 90, 0.0049) 80%, rgba(242, 198, 90, 0.002) 88%, rgba(242, 198, 90, 0.0006) 94%, rgba(242, 198, 90, 0) 100%); }
 .inside h2 { max-width: 13em; }
 .cards { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; margin-top: 36px; }
 @media (min-width: 900px) { .cards { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; } }
@@ -888,7 +899,7 @@ html:not(.js) .fin-done { display: none; }
 .sh-sub { font-size: 14px; line-height: 1.4; color: var(--text); max-width: 19em; }
 /* a post, and cheers landing on it */
 .viz-feed { display: grid; grid-template-columns: minmax(0, 1fr); align-content: center; padding: 14px; }
-.post { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; min-width: 0; padding: 14px; border-radius: 18px; border: 1.5px solid rgba(233, 185, 73, 0.55); background: radial-gradient(80% 70% at 50% 0%, rgba(242, 198, 90, 0.16), rgba(242, 198, 90, 0.06) 45%, rgba(242, 198, 90, 0) 100%), var(--s1); box-shadow: inset 0 1px 0 rgba(255, 236, 180, 0.12); }
+.post { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; min-width: 0; padding: 14px; border-radius: 18px; border: 1.5px solid rgba(233, 185, 73, 0.55); background: radial-gradient(80% 70% at 50% 0%, rgba(242, 198, 90, 0.16), rgba(242, 198, 90, 0.1439) 6%, rgba(242, 198, 90, 0.1283) 12%, rgba(242, 198, 90, 0.1135) 18%, rgba(242, 198, 90, 0.0974) 25%, rgba(242, 198, 90, 0.0827) 32%, rgba(242, 198, 90, 0.0679) 40%, rgba(242, 198, 90, 0.0555) 48%, rgba(242, 198, 90, 0.0433) 56%, rgba(242, 198, 90, 0.0314) 64%, rgba(242, 198, 90, 0.0205) 72%, rgba(242, 198, 90, 0.0112) 80%, rgba(242, 198, 90, 0.0043) 88%, rgba(242, 198, 90, 0.0011) 94%, rgba(242, 198, 90, 0) 100%), var(--s1); box-shadow: inset 0 1px 0 rgba(255, 236, 180, 0.12); }
 .post-head { display: flex; align-items: center; gap: 9px; margin-bottom: 4px; }
 .post-head div { flex: 1; min-width: 0; }
 .post-head b { display: block; font-weight: 600; font-size: 14.5px; line-height: 1.25; color: var(--ink); }
@@ -912,7 +923,7 @@ html:not(.js) .fin-done { display: none; }
 .js .cheers[data-n="1"] .w1, .js .cheers[data-n="2"] .w2, .js .cheers[data-n="3"] .w3 { opacity: 1; }
 
 /* ───────────── 5. Story ───────────── */
-.story { padding: var(--sec) 0; background: radial-gradient(46% 420px at 16% 0, rgba(242, 198, 90, 0.055), rgba(242, 198, 90, 0.022) 42%, rgba(242, 198, 90, 0) 100%); }
+.story { padding: var(--sec) 0; background: radial-gradient(46% 420px at 16% 0, rgba(242, 198, 90, 0.055), rgba(242, 198, 90, 0.0493) 6%, rgba(242, 198, 90, 0.0439) 12%, rgba(242, 198, 90, 0.0387) 18%, rgba(242, 198, 90, 0.0331) 25%, rgba(242, 198, 90, 0.028) 32%, rgba(242, 198, 90, 0.0231) 40%, rgba(242, 198, 90, 0.0188) 48%, rgba(242, 198, 90, 0.0146) 56%, rgba(242, 198, 90, 0.0105) 64%, rgba(242, 198, 90, 0.0068) 72%, rgba(242, 198, 90, 0.0037) 80%, rgba(242, 198, 90, 0.0014) 88%, rgba(242, 198, 90, 0.0004) 94%, rgba(242, 198, 90, 0) 100%); }
 .story-wrap { display: grid; gap: 44px; align-items: center; }
 .story-copy { max-width: 700px; }
 .story h2 { font-size: clamp(34px, 4.6vw, 58px); }
@@ -1017,7 +1028,7 @@ html:not(.js) .fin-done { display: none; }
 .plans { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; max-width: 920px; margin: 40px auto 24px; }
 @media (min-width: 760px) { .plans { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; } }
 .plan { position: relative; padding: clamp(22px, 3vw, 32px); border-radius: 28px; background: var(--card); border: 1px solid var(--line); box-shadow: var(--edge), var(--lift); }
-.plan.premium { border: 1.5px solid rgba(233, 185, 73, 0.55); background: radial-gradient(90% 320px at 50% 0, rgba(242, 198, 90, 0.16), rgba(242, 198, 90, 0.06) 45%, rgba(242, 198, 90, 0) 100%), var(--card); box-shadow: inset 0 1px 0 rgba(255, 236, 180, 0.16), var(--lift), 0 0 110px -36px rgba(242, 198, 90, 0.5); }
+.plan.premium { border: 1.5px solid rgba(233, 185, 73, 0.55); background: radial-gradient(90% 320px at 50% 0, rgba(242, 198, 90, 0.16), rgba(242, 198, 90, 0.1439) 6%, rgba(242, 198, 90, 0.1283) 12%, rgba(242, 198, 90, 0.1135) 18%, rgba(242, 198, 90, 0.0974) 25%, rgba(242, 198, 90, 0.0827) 32%, rgba(242, 198, 90, 0.0679) 40%, rgba(242, 198, 90, 0.0555) 48%, rgba(242, 198, 90, 0.0433) 56%, rgba(242, 198, 90, 0.0314) 64%, rgba(242, 198, 90, 0.0205) 72%, rgba(242, 198, 90, 0.0112) 80%, rgba(242, 198, 90, 0.0043) 88%, rgba(242, 198, 90, 0.0011) 94%, rgba(242, 198, 90, 0) 100%), var(--card); box-shadow: inset 0 1px 0 rgba(255, 236, 180, 0.16), var(--lift), 0 0 110px -36px rgba(242, 198, 90, 0.5); }
 .plan-name { display: flex; align-items: center; gap: 10px; font-size: 22px; letter-spacing: -0.02em; }
 .founders { padding: 4px 10px; border-radius: 999px; background: rgba(242, 198, 90, 0.14); border: 1px solid rgba(242, 198, 90, 0.45); font: 600 12px var(--body); letter-spacing: 0; color: var(--gold); }
 /* prices: the real one, the crossed-out one right beside it, and what the
@@ -1075,7 +1086,7 @@ html:not(.js) .fin-done { display: none; }
 
 /* ───────────── Final call to action ───────────── */
 .join { padding: var(--sec) 0; text-align: center; overflow: hidden; }
-.join-light { position: absolute; inset: 0; background: radial-gradient(60% 72% at 50% 100%, rgba(242, 198, 90, 0.2), rgba(242, 198, 90, 0.085) 40%, rgba(242, 198, 90, 0.026) 72%, rgba(242, 198, 90, 0) 100%); pointer-events: none; }
+.join-light { position: absolute; inset: 0; background: radial-gradient(60% 72% at 50% 100%, rgba(242, 198, 90, 0.2), rgba(242, 198, 90, 0.1798) 6%, rgba(242, 198, 90, 0.1605) 12%, rgba(242, 198, 90, 0.1423) 18%, rgba(242, 198, 90, 0.1223) 25%, rgba(242, 198, 90, 0.104) 32%, rgba(242, 198, 90, 0.085) 40%, rgba(242, 198, 90, 0.0676) 48%, rgba(242, 198, 90, 0.0515) 56%, rgba(242, 198, 90, 0.0374) 64%, rgba(242, 198, 90, 0.026) 72%, rgba(242, 198, 90, 0.0158) 80%, rgba(242, 198, 90, 0.0066) 88%, rgba(242, 198, 90, 0.0018) 94%, rgba(242, 198, 90, 0) 100%); pointer-events: none; }
 .join .wrap { position: relative; }
 .join-mark { width: 96px; height: auto; margin-bottom: 22px; overflow: visible; }
 .join-mark path { fill: none; stroke: url(#g-mark); stroke-width: 9; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; }
