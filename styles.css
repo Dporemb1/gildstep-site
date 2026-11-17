@@ -119,7 +119,66 @@ h2 { font-size: clamp(34px, 4.8vw, 62px); line-height: 1.02; letter-spacing: -0.
 .note.gap { margin-bottom: 22px; }
 .msg { font-size: 15px; }
 .msg:empty { display: none; }
-.msg.ok { color: var(--ok); } .msg.err { color: var(--bad); }
+/* A signup that failed: said beside the form in plain words, with an ember
+   mark, and the field's edge turns ember until the email is edited. */
+.msg.err { display: flex; align-items: flex-start; justify-content: center; gap: 9px; color: var(--text); text-align: left; }
+.msg.err::before { content: "!"; flex: none; display: grid; place-items: center; width: 20px; height: 20px; margin-top: 1.5px; border-radius: 50%; background: rgba(255, 122, 47, 0.16); border: 1px solid rgba(255, 150, 70, 0.65); color: var(--ember-l); font: 700 12px/1 var(--body); }
+.msg.err::before { content: "!" / ""; }
+.invite .msg.err { justify-content: flex-start; }
+.invite .msg.done { align-self: flex-start; }
+.form.bad input[type="email"] { border-color: rgba(255, 138, 60, 0.8); }
+@media (min-width: 480px) {
+  .form.bad, .form.bad:focus-within { border-color: rgba(255, 138, 60, 0.8); }
+  .form.bad input[type="email"] { border-color: transparent; }
+}
+/* Joined: the form gives way to this, a gold check and "You're on the
+   list", for the rest of the visit. */
+.msg.done { align-self: center; display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 20px 0 14px; border-radius: 999px; background: #0f0d0a; border: 1px solid rgba(242, 198, 90, 0.3); box-shadow: var(--edge); color: var(--ink); font-weight: 600; font-size: 16px; line-height: 1.2; }
+.msg.done svg { flex: none; width: 24px; height: 24px; padding: 5px; border-radius: 50%; background: rgba(242, 198, 90, 0.14); border: 1px solid rgba(242, 198, 90, 0.4); fill: var(--gold); }
+/* Focus lands here when the card closes. It is a status, not a control,
+   so it takes no focus ring. */
+.msg.done:focus { outline: 0; }
+
+/* ───────────── "You're on the list" ─────────────
+   The thank-you card that opens over the dimmed page after a signup
+   (site.js builds it). The dialog is the dimmed layer, so a tap anywhere
+   outside the card lands on it and closes it. */
+.thanks { position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; margin: 0; padding: 20px 16px; border: 0; background: rgba(6, 5, 4, 0.76); color: var(--text); overflow: hidden; }
+.thanks[open] { display: grid; place-items: center; }
+.thanks::backdrop { background: none; }
+.thanks-card {
+  position: relative; width: 100%; max-width: 380px; padding: 36px 28px 28px; border-radius: 28px; text-align: center; overflow: hidden;
+  background: radial-gradient(120% 70% at 50% 0%, rgba(242, 198, 90, 0.13), rgba(242, 198, 90, 0.1) 14%, rgba(242, 198, 90, 0.072) 28%, rgba(242, 198, 90, 0.048) 42%, rgba(242, 198, 90, 0.028) 56%, rgba(242, 198, 90, 0.013) 70%, rgba(242, 198, 90, 0.004) 85%, rgba(242, 198, 90, 0) 100%), var(--card);
+  border: 1px solid rgba(242, 198, 90, 0.26); box-shadow: var(--edge), 0 40px 90px -30px #000, 0 0 70px -24px rgba(242, 198, 90, 0.3);
+}
+/* The gold accent: a fine line of light along the card's top edge. */
+.thanks-card::before { content: ""; position: absolute; left: 14%; right: 14%; top: 0; height: 1px; background: linear-gradient(90deg, rgba(247, 220, 138, 0), rgba(247, 220, 138, 0.85) 50%, rgba(247, 220, 138, 0)); }
+.thanks .thanks-mark { display: block; width: 60px; height: 60px; margin: 0 auto 22px; border-radius: 14px; box-shadow: 0 0 0 1px rgba(242, 198, 90, 0.34), 0 14px 30px -12px rgba(242, 198, 90, 0.5); }
+.thanks .thanks-mark rect { fill: #0f0d0a; }
+.thanks h2 { font-size: 30px; line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 10px; }
+.thanks p { max-width: 17em; margin: 0 auto 26px; font-size: 16.5px; line-height: 1.5; color: var(--text); text-wrap: balance; }
+.thanks .btn { width: 100%; }
+@media (max-width: 359px) { .thanks-card { padding: 30px 20px 22px; } .thanks h2 { font-size: 27px; } }
+/* A phone on its side: the card drops the mark so it still fits. */
+@media (max-height: 420px) {
+  .thanks-card { padding: 22px 24px 20px; }
+  .thanks .thanks-mark { display: none; }
+  .thanks p { margin-bottom: 18px; }
+}
+/* It fades in and rises a little, and the mark's four steps gild one after
+   another. With Reduce Motion it is simply there. */
+@media (prefers-reduced-motion: no-preference) {
+  .thanks[open] { animation: thanks-dim 0.28s ease both; }
+  .thanks[open] .thanks-card { animation: thanks-in 0.5s var(--out) both; }
+  .thanks[open] .thanks-mark path { animation: thanks-gild 0.5s ease both; }
+  .thanks[open] .thanks-mark .s1 { animation-delay: 0.18s; } .thanks[open] .thanks-mark .s2 { animation-delay: 0.3s; } .thanks[open] .thanks-mark .s3 { animation-delay: 0.42s; } .thanks[open] .thanks-mark .s4 { animation-delay: 0.54s; }
+  .thanks.closing[open] { animation: thanks-out 0.17s ease both; }
+  .thanks.closing[open] .thanks-card { animation: none; }
+}
+@keyframes thanks-dim { from { background-color: rgba(6, 5, 4, 0); } }
+@keyframes thanks-in { from { opacity: 0; transform: translateY(16px) scale(0.985); } }
+@keyframes thanks-gild { from { stroke: #5c4d2b; } }
+@keyframes thanks-out { to { opacity: 0; } }
 .badge { align-self: center; display: inline-block; border-radius: 10px; }
 .badge img { display: block; height: 60px; width: auto; }
 
