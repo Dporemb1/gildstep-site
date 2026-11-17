@@ -146,7 +146,9 @@
     });
 
     // The invite page: /u/<username> (GitHub Pages serves it from 404.html).
-    var m = location.pathname.match(/^\/u\/([A-Za-z0-9_]{3,20})\/?$/);
+    // Usernames (the app's B-152): 3-30 of letters, numbers, . and _, no
+    // period first, last or doubled; any case in the link, shown lowercase.
+    var m = location.pathname.match(/^\/u\/((?!\.)(?!.*\.\.)(?!.*\.\/?$)[A-Za-z0-9._]{3,30})\/?$/);
     var invite = document.getElementById("invite");
     var missing = document.getElementById("missing");
     if (invite && missing) {
