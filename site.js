@@ -167,27 +167,104 @@
     }
 
     // The waitlist: one call to the database function, nothing else. The
-    // home page has the form twice; joining through one settles both.
+    // home page has the form twice; joining through one settles both: each
+    // form gives way to a gold check and "You're on the list", and a
+    // thank-you card opens over the page. A signup that fails says why
+    // beside the form.
     var copy = {
-      ok: "You're on the list. We'll email you when " + d.app + " is ready.",
       invalid: "That email doesn't look right. Check it and try again.",
       slow_down: "That's a lot of tries. Give it a little while and try again.",
       error: "Couldn't add you right now. Email " + d.support + " and we'll add you.",
     };
     var forms = $$("form.waitlist");
+
+    // The thank-you card: a modal <dialog>, so the browser keeps the
+    // keyboard inside it and closes it on Escape. "Got it" and a tap
+    // outside the card close it too, and focus then goes to `back`, the
+    // confirmation where the form was. A browser too old for <dialog>
+    // skips the card and shows that confirmation alone.
+    function thanks(back) {
+      var dlg = document.createElement("dialog");
+      if (typeof dlg.showModal !== "function") return;
+      dlg.className = "thanks";
+      dlg.setAttribute("aria-labelledby", "thanks-title");
+      dlg.setAttribute("aria-describedby", "thanks-text");
+      dlg.innerHTML =
+        '<div class="thanks-card">' +
+        '<svg class="mark full thanks-mark" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="15"/><path class="s1" d="M13 47H22"/><path class="s2" d="M22 47V39H31"/><path class="s3" d="M31 39V31H40"/><path class="s4" d="M40 31V23H51"/></svg>' +
+        '<h2 id="thanks-title">You\'re on the list.</h2><p id="thanks-text"></p>' +
+        '<button class="btn" type="button">Got it</button></div>';
+      $("p", dlg).textContent = "We'll email you the moment " + d.app + " is ready.";
+      var card = $(".thanks-card", dlg);
+      var gotIt = $("button", dlg);
+      var closing = false;
+      function close() {
+        if (closing) return;
+        closing = true;
+        dlg.classList.add("closing");
+        // The fade out, then the real close (at once with Reduce Motion).
+        setTimeout(function () {
+          if (dlg.open) dlg.close();
+        }, reduced ? 0 : 170);
+      }
+      gotIt.addEventListener("click", close);
+      dlg.addEventListener("click", function (e) {
+        if (!card.contains(e.target)) close();
+      });
+      dlg.addEventListener("cancel", function (e) {
+        e.preventDefault();
+        close();
+      });
+      dlg.addEventListener("close", function () {
+        if (dlg.parentNode) dlg.parentNode.removeChild(dlg);
+        if (back) back.focus();
+      });
+      // The page stays put behind the card: no wheel, swipe or key scrolls
+      // it (two fingers still zoom).
+      dlg.addEventListener("wheel", function (e) { e.preventDefault(); }, { passive: false });
+      dlg.addEventListener("touchmove", function (e) { if (e.touches.length < 2) e.preventDefault(); }, { passive: false });
+      dlg.addEventListener("keydown", function (e) {
+        var k = e.key;
+        var scrolls = k === "ArrowUp" || k === "ArrowDown" || k === "PageUp" || k === "PageDown" || k === "Home" || k === "End" || ((k === " " || k === "Spacebar") && e.target !== gotIt);
+        if (scrolls) e.preventDefault();
+      });
+      document.body.appendChild(dlg);
+      dlg.showModal();
+      gotIt.focus();
+    }
+
+    function joined(form) {
+      var back = null;
+      forms.forEach(function (f) {
+        f.reset();
+        f.classList.remove("bad");
+        f.hidden = true;
+        var done = f.parentNode.querySelector(".msg");
+        done.className = "msg done";
+        done.innerHTML = '<svg viewBox="0 0 256 256" aria-hidden="true"><path d="m232.49 80.49-128 128a12 12 0 0 1-17 0l-56-56a12 12 0 1 1 17-17L96 183 215.51 63.51a12 12 0 0 1 17 17Z"/></svg><span>You\'re on the list</span>';
+        // Focusable from script only, for when the card closes.
+        done.tabIndex = -1;
+        if (f === form) back = done;
+      });
+      thanks(back);
+    }
+
     forms.forEach(function (form) {
       var msg = form.parentNode.querySelector(".msg");
       var button = form.querySelector("button");
-      function say(kind, on) {
-        var target = on || msg;
-        target.textContent = copy[kind] || copy.error;
-        target.className = "msg " + (kind === "ok" ? "ok" : "err");
+      function say(kind) {
+        msg.textContent = copy[kind] || copy.error;
+        msg.className = "msg err";
+        form.classList.add("bad");
       }
+      form.email.addEventListener("input", function () {
+        form.classList.remove("bad");
+      });
       form.addEventListener("submit", function (e) {
         e.preventDefault();
         var email = form.email.value.trim();
         // A filled hidden field means a bot: answer as if it worked.
-        if (form.company.value) return say("ok");
+        if (form.company.value) return joined(form);
         if (!/^[^@\s]+@[^@\s]+\.[A-Za-z]{2,}$/.test(email)) return say("invalid");
         button.disabled = true;
         fetch(d.supabaseUrl + "/rest/v1/rpc/join_waitlist", {
@@ -201,13 +278,7 @@
           .then(function (res) {
             var status = res && res.status === "closed" ? "error" : res && res.status;
             if (status !== "ok") return say(status);
-            forms.forEach(function (f) {
-              f.reset();
-              f.hidden = true;
-              var note = f.parentNode.querySelector(".note");
-              if (note) note.hidden = true;
-              say("ok", f.parentNode.querySelector(".msg"));
-            });
+            joined(form);
             track("site_waitlist_joined", { from: m ? "invite" : "home" });
           })
           .catch(function () {
