@@ -1186,6 +1186,9 @@ body > footer a:hover { color: var(--ink); }
 .invite .lede { margin-bottom: 28px; }
 .invite .btn.secondary { width: 100%; margin-bottom: 14px; }
 .invite .btn-lg, .invite .badge { align-self: flex-start; }
+/* The unsubscribe page moves focus to its heading: read out, no ring. */
+#unsubscribe h1:focus { outline: 0; }
+#unsubscribe .btn.secondary { width: auto; margin-bottom: 0; }
 
 /* ───────────── Reduce Motion: finished states, nothing moving ─────────────
    (The hold ring still fills: there the fill is the feedback, as in the app.) */

@@ -1,5 +1,5 @@
 // gildstep.com: the main button (from /config.js), the waitlist, the invite
-// page, optional analytics, and the home page's motion. No inline script
+// page, the unsubscribe page, optional analytics, and the home page's motion. No inline script
 // anywhere: the Content Security Policy forbids it.
 //
 // On the home page this loads in <head>: the "js" class goes on <html>
@@ -289,6 +289,31 @@
           });
       });
     });
+
+    // The unsubscribe page (/unsubscribe/?t=<token>): where the link in a
+    // waitlist email lands. The token is that signup's own random key,
+    // never an address. One call to the waitlist-unsubscribe function,
+    // then "You're unsubscribed"; anything else says who to email instead.
+    if (document.getElementById("unsubscribe")) {
+      var showUnsub = function (id) {
+        ["unsub-wait", "unsub-done", "unsub-failed"].forEach(function (s) {
+          document.getElementById(s).hidden = s !== id;
+        });
+        var heading = $("#" + id + " h1");
+        document.title = heading.textContent;
+        heading.focus();
+      };
+      var token = (location.search.match(/[?&]t=([0-9a-f]{48})(?:&|$)/) || [])[1];
+      if (!token) showUnsub("unsub-failed");
+      else
+        fetch(d.supabaseUrl + "/functions/v1/waitlist-unsubscribe?t=" + token, { method: "POST" })
+          .then(function (r) {
+            showUnsub(r.ok ? "unsub-done" : "unsub-failed");
+          })
+          .catch(function () {
+            showUnsub("unsub-failed");
+          });
+    }
 
     if (d.page === "home") {
       try {
